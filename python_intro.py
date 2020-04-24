@@ -29,3 +29,6 @@ if __name__ == '__main__':
     print("Iteration 50: " + str(bisection(f,1,2,50)))
     print("Iteration 100: " + str(bisection(f,1,2,100)))
     print("Fehler: " + str(bisection(f,2,4,10)))
+
+
+#Alternativ: scipy.optimize.bisect nutzen
