@@ -28,14 +28,14 @@ class LargestEigenvalues:
         
         Parameters
         ----------
-        A : numpy.ndarray (n,n)     
-            positive definite np.ndarray Matrix (n x n) [i.e. all Eigenvalues > 0, square matrix]
+        A : numpy.ndarray (m,m)     
+            positive definite square np.ndarray Matrix (m x m) [i.e. all Eigenvalues > 0]
         n : integer     
             number of iterations to be performed in approximation
         
         Returns
         -------
-        (sigma : float, partial_sigmas : np.array(n))
+        (sigma : float, partial_sigmas : np.array(m))
             Returns a tuple, containing:
             - [0] the resulting estimation for largest Eigenvalue sigma
             - [1] a numpy array holding all interim results for sigma in order of iteration
@@ -81,7 +81,7 @@ class LargestEigenvalues:
 
         Parameters
         ----------
-        A: numpy.ndarray (n x n)-Matrix
+        A: numpy.ndarray (m x m)-Matrix
 
         Returns
         -------
@@ -101,9 +101,9 @@ class LargestEigenvalues:
 
         Parameters
         ----------
-        A : numpy.ndarray(n,n)
+        A : numpy.ndarray(m,m)
             positive definite square matrix [i.e. all Eigenvalues > 0]
-        r : numpy.array(n) 
+        r : numpy.array(m) 
             current approx. Eigenvector corresponding to A's largest Eigenvalue
 
         Returns
@@ -146,9 +146,9 @@ class LargestEigenvalues:
 
         Parameters
         ----------
-        A : numpy.ndarray (n,n)
+        A : numpy.ndarray (m,m)
             Definite positive quare matrix for which to find largest Eigenvalue.
-        r : numpy.array(n)
+        r : numpy.array(m)
             Current hypothesis Eigenvector
         sigma : float
             Currently approximated largest Eigenvalue for A
