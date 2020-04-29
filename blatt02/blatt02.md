@@ -6,8 +6,14 @@ Bearbeitung bis zum 7. Mai.
 
 
 ## Aufgabe 2 (C++ Ausdrücke)
+Sie haben in der Vorlesung über *Number conversion* und *initialization* gesprochen.
+Geben Sie den Wert der Variablen nach der Initialisierung an und erklären Sie wie dieser zustande kommt.
 
-
+1. `double x = 42.0f:`
+2. `float x = 1e-50;`
+3. `double x = 1/2;`
+4. `double x = 1.0/2;`
+5. `int x = -3ul + 4;`
 
 ## Aufgabe 3 (Automatic Differentiation)
 
