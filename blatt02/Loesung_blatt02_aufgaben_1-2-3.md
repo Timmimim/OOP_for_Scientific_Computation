@@ -196,7 +196,7 @@ Benutzen Sie die Streams `std::cin >> ...` und
 // return unsigned long to be able to calculate larger squared values
 unsigned long sqr(unsigned int n)
 {
-  return (unsigned long) n * (unsigned long) n;
+  return n * n;
 }
 
 unsigned long squared_integer_sequence_from_0_to(int n)
