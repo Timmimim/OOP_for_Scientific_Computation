@@ -13,7 +13,7 @@ std::pair<double, int> newton(std::function<Ad::SimpleAd(Ad::SimpleAd)> f, doubl
   for(; iter < max_iter;++iter){
     x = x - fx.value() / fx.derivative();
     fx = f(Ad::SimpleAd(x));
-    if(std::abs(fx.value()) < 1e-8) break;
+    if(std::abs(fx.value()) < tol) break;
   }
   if(iter >= max_iter)
     throw std::runtime_error("Newton does not converge");
