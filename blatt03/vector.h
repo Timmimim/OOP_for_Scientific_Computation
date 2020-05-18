@@ -38,7 +38,7 @@ public:
     std::copy(data, data+size, _data);
   }
 
-  // assignment constructor
+  // assignment operator
   Vector& operator= (const Vector& other)
   {
     if (this == &other) return *this;
