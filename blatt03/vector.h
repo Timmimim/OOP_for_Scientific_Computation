@@ -12,7 +12,7 @@ public:
   Vector(unsigned int length) : _len(length), _data(new double[length]) {}
   
   // destructor
-  ~Vector() { delete _data; }
+  ~Vector() { delete[] _data; }
 
   // copy constructor
   Vector(const Vector& other)
