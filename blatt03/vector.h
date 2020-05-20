@@ -42,9 +42,11 @@ public:
   Vector& operator= (const Vector& other)
   {
     if (this == &other) return *this;
-    delete[] _data;
-    _len = other.size();
-    _data = new double[_len];
+    if(other.size() != size()){
+      delete[] _data;
+      _len = other.size();
+      _data = new double[_len];
+    }
     std::copy(other._data, other._data+other.size(), _data);
     return *this;
   }
