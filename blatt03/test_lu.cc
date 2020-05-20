@@ -13,11 +13,11 @@ int main() {
      * 
      * Ax = b   is to be solved for Vector x
      */
+    
     Matrix m ({{2,-1,0},{-1,2,-1},{0,-1,2}});
     
     double elements[3] = {1.,1.,1.};
     Vector b (elements, 3);
-    
     // skip assertions; 
     // we wrote main and hardcoded m and b; we trust ourselves to ensure dimensions match here.
 

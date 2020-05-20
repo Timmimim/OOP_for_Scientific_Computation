@@ -12,7 +12,7 @@ public:
   Vector(unsigned int length) : _len(length), _data(new double[length]) {}
   
   // destructor
-  ~Vector() { delete[] _data; }
+  ~Vector() { delete _data; }
 
   // copy constructor
   Vector(const Vector& other)
@@ -38,7 +38,7 @@ public:
     std::copy(data, data+size, _data);
   }
 
-  // assignment operator
+  // assignment constructor
   Vector& operator= (const Vector& other)
   {
     if (this == &other) return *this;

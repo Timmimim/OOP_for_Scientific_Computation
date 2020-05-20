@@ -14,9 +14,9 @@ public:
 
   // construct from existing 'free' data
   Matrix(std::vector<std::vector<double>>&& data){
-    _data = data;
     _rows = data.size();
     _cols = data[0].size();
+    _data = std::move(data);
     data.erase(data.begin(), data.end());
   }
 
@@ -36,7 +36,7 @@ public:
   {
     _rows = other.rows();
     _cols = other.cols();
-    _data = other._data;
+    _data = std::move(other._data);
     other._data.erase(other._data.begin(),other._data.end());
     other._rows = 0;
     other._cols = 0;
@@ -57,7 +57,7 @@ public:
     if (this == &other) return *this;
     _rows = other.rows();
     _cols = other.cols();
-    _data = other._data;
+    _data = std::move(other._data);
     other._data.erase(other._data.begin(),other._data.end());
     other._rows = 0;
     other._cols = 0;
