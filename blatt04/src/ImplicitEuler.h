@@ -3,7 +3,7 @@
 
 #include "ODESolver.h";
 
-class ImplicitEuler : ODESolver{
+class ImplicitEuler : ODESolver {
 public:
     /**
      * TODO: Implement me.
