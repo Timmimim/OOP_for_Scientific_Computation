@@ -1,8 +1,9 @@
 #ifndef IMPLICIT_EULER_H
 #define IMPLICIT_EULER_H
 
-#include "ODESolver.h";
+#include "ODESolver.h"
 
+template <std::size_t N>
 class ImplicitEuler : ODESolver {
 public:
     /**
