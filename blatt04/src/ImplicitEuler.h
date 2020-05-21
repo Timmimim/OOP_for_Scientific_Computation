@@ -4,7 +4,8 @@
 #include "ODESolver.h"
 
 template <std::size_t N>
-class ImplicitEuler : ODESolver {
+class ImplicitEuler 
+        : public ODESolver<N> {
 public:
     /**
      * TODO: Implement me.

@@ -1,6 +1,7 @@
 #ifndef ODESOLVER_H
 #define ODESOLVER_H
 
+template <std::size_t N>
 class ODESolver{
 public:
     /**

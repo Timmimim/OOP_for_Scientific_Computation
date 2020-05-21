@@ -6,7 +6,8 @@
 #include "ODE.h"
 
 template <std::size_t N>
-class SIR : ODE {
+class SIR : 
+        public ODE<N> {
 public:
     SIR(double beta, double gamma, std::array<double,3> x)
         : _beta(beta), _gamma(gamma), _S(x[0]), _I(x[1]), _R(x[2]) {};
@@ -18,11 +19,12 @@ public:
         _I += infected-recovered;
         _R += recovered;
     };
-
+    /*
     std::array<double,3> g()
     {
 
     };
+    */
 
     std::array<double,3> currentPopulation()
     {
