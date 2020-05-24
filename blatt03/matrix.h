@@ -1,7 +1,7 @@
+#include "vector.h"
+
 #ifndef MATRIX_H
 #define MATRIX_H
-
-#include "vector.h"
 
 class Matrix{
 public:
@@ -93,6 +93,89 @@ public:
     return result;
   }
 
+  Matrix operator+ (const Matrix& other) const
+  {
+    assert(_cols == other.cols() && _rows == other.rows());
+    Matrix result(_rows, _cols);
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<other.cols(); j++) 
+      {
+        result(i,j) = _data[i][j] + other(i,j);
+      }
+    }
+    return result;
+  }
+  Matrix operator- (const Matrix& other) const
+  {
+    assert(_cols == other.cols() && _rows == other.rows());
+    Matrix result(_rows, _cols);
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<other.cols(); j++) 
+      {
+        result(i,j) = _data[i][j] - other(i,j);
+      }
+    }
+    return result;
+  }
+
+  Matrix operator*= (const double factor)
+  {
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<_cols; j++) 
+      {        
+        _data[i][j] *= factor;
+      }
+    }
+    return *this;
+  }
+
+  Matrix operator*= (const Matrix& other)
+  {
+    assert(_cols == other.rows());
+
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<other.cols(); j++) 
+      {
+        // result(i,j) initialized to 0 by default, see constructor
+        for(size_t k=0 ; k<_cols ; k++)  
+        {
+            _data[i][k] *= other(k,j);
+        }
+      }
+    }
+    return *this;
+  }
+
+  Matrix operator+= (const Matrix& other)
+  {
+    assert(_cols == other.cols() && _rows == other.rows());
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<other.cols(); j++) 
+      {
+        _data[i][j] += other(i,j);
+      }
+    }
+    return *this;
+  }
+
+  Matrix operator-= (const Matrix& other)
+  {
+    assert(_cols == other.cols() && _rows == other.rows());
+    for(size_t i=0 ; i<_rows ; i++)
+    {
+      for(size_t j=0 ; j<other.cols(); j++) 
+      {
+        _data[i][j] -= other(i,j);
+      }
+    }
+    return *this;
+  }
+
   unsigned int rows() const{
     return _rows;
   }
@@ -125,7 +208,20 @@ public:
       y(row) = step_result;
     }
   }
-
+  
+  std::vector<double> operator * (const std::vector<double>& vector) const
+  {
+    assert(_cols == vector.size());
+    std::vector<double> result(_rows);
+    for (size_t row = 0; row < _rows; ++row)
+    {
+      double step_result=0.;
+      for (size_t col = 0; col < _cols; ++col)
+        step_result += _data[row][col] * vector[col];
+      result[row] = step_result;
+    }
+    return result;
+  }
 
 private:
   unsigned int _rows;
@@ -133,5 +229,63 @@ private:
   std::vector<std::vector<double>> _data;
 
 };
+
+Matrix operator* (const Matrix& mat, const double factor)
+  {
+    Matrix result(mat.rows(), mat.cols());
+
+    for(size_t i=0 ; i<mat.rows(); i++)
+    {
+      for(size_t j=0 ; j<mat.cols(); j++) 
+      {        
+        result(i,j) = mat(i,j) * factor;
+      }
+    }
+    return result;
+  }
+  
+  Matrix operator* (const double factor, const Matrix& mat)
+  {
+    Matrix result(mat.rows(), mat.cols());
+
+    for(size_t i=0 ; i<mat.rows(); i++)
+    {
+      for(size_t j=0 ; j<mat.cols(); j++) 
+      {        
+        result(i,j) = mat(i,j) * factor;
+      }
+    }
+    return result;
+  }
+
+  Matrix operator* (const Matrix& mat, const int factor)
+  {
+    Matrix result(mat.rows(), mat.cols());
+
+    for(size_t i=0 ; i<mat.rows(); i++)
+    {
+      for(size_t j=0 ; j<mat.cols(); j++) 
+      {        
+        result(i,j) = mat(i,j) * factor;
+      }
+    }
+    return result;
+  }
+  
+  Matrix operator* (const int factor, const Matrix& mat)
+  {
+    Matrix result(mat.rows(), mat.cols());
+
+    for(size_t i=0 ; i<mat.rows(); i++)
+    {
+      for(size_t j=0 ; j<mat.cols(); j++) 
+      {        
+        result(i,j) = mat(i,j) * factor;
+      }
+    }
+    return result;
+  }
+
+
 
 #endif

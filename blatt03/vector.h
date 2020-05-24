@@ -83,6 +83,16 @@ public:
     }
     return result;
   }
+  
+  Vector operator+= (const Vector other)
+  {
+    assert(this->_len == other.size());
+    for(int i = 0; i<_len; ++i)
+    {
+      _data[i] + other(i);
+    }
+    return *this;
+  }
 
   Vector operator- (const Vector other)
   {
@@ -93,6 +103,16 @@ public:
       result(i) = _data[i] - other(i);
     }
     return result;
+  }
+
+  Vector operator-= (const Vector other)
+  {
+    assert(this->_len == other.size());
+    for(int i = 0; i<_len; ++i)
+    {
+      _data[i] - other(i);
+    }
+    return *this;
   }
 
   Vector operator* (const Vector other)
