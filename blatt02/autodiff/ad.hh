@@ -73,6 +73,16 @@ namespace Ad
   {
     return SimpleAd(left + right.value(), right.derivative());
   }
+  
+  SimpleAd operator-(const SimpleAd& left, const double right)
+  {
+    return SimpleAd(left.value() - right, left.derivative());
+  }
+
+  SimpleAd operator-(const double left, const SimpleAd& right)
+  {
+    return SimpleAd(left - right.value(), right.derivative());
+  }
 
   SimpleAd operator*(const SimpleAd& left, const double right)
   {
