@@ -1,24 +1,26 @@
 #ifndef EXPLICIT_EULER_H
 #define EXPLICIT_EULER_H
 
-#include <functional>
 #include <vector>
 #include <array>
 
 #include "ODESolver.h"
+#include "ODE.h"
 
-template <std::size_t N>
+template <unsigned long N>
 class ExplicitEuler 
         : public ODESolver<N> {
 
 public:
+    ExplicitEuler (ODE<N> &problem, const double start, const double step, const double end)
+        : _problem(&problem), _initial_distribution(problem.getData()), _t(start), _dt(step), _T(end)  {};
 
     std::vector<std::array<double,N+1>> solve () {
         std::array<double,N> x = _initial_distribution;
 
         double t = _t;
 
-        std::vector<std::array<double,N+1>> data();
+        std::vector<std::array<double,N+1>> data(N);
         data[0][0] = t;
         for (size_t i = 1; i <= N; ++i){
             data[0][i] = x[i-1];
@@ -26,18 +28,16 @@ public:
 
         while(t < _T)
         {
-            auto dx = _problem(x);
+            auto dx = _problem->f();
             std::array<double,N+1> result;
             result[0] = t;
-            
-            x[0] = x[0] + _dt * dx[0];
-            result[1] = x[0];
 
-            for (size_t i = 1; i < N; ++i){
+            for (size_t i = 0; i < N; ++i){
                 x[i] += _dt * dx[i];
                 result[i+1] = x[i];
             }
             data.push_back(result);
+            _problem->updateData(dx);
             t += _dt;
         }
         return data;
@@ -45,11 +45,15 @@ public:
 
 
 private:
-    std::function<std::array<double, N>(std::array<double,N>)> _problem;
+
+    ODE<N> *_problem;
+    // std::function<std::array<double, N>(std::array<double,N>)> _problem;
     std::array<double,N> _initial_distribution;
     double _t;
     double _dt;
     double _T;
 };
+
+// template class ExplicitEuler<3ul>;
 
 #endif
