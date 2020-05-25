@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 class Vector{
 public:
@@ -36,11 +37,11 @@ public:
     _data = std::vector<double>(data,data+size);
   }
 
-  Vector(const std::vector<double> data)
+  /*Vector(const std::vector<double> data)
   {
     _len = data.size();
     _data = data;
-  }
+  }*/
 
   Vector(std::vector<double>&& data)
   {
@@ -191,6 +192,19 @@ Vector operator* (const double factor, const Vector& vector)
   }
   return result;
 }
+
+// C++ template to print vector container elements 
+std::ostream& operator<<(std::ostream& os, const Vector& v) 
+{ 
+    os << "["; 
+    for (int i = 0; i < v.size(); ++i) { 
+        os << v(i); 
+        if (i != v.size() - 1) 
+            os << ", "; 
+    } 
+    os << "]\n"; 
+    return os; 
+} 
 
 Vector operator* (const Vector& vector, const double factor)
 {
