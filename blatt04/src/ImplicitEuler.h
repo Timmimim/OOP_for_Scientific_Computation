@@ -61,6 +61,7 @@ public:
         int iter = 0;
         Vector approx_x(x_init);
         Vector update_summand(N);
+        
         /**
          * Calculate g(x^k)
          */
@@ -86,13 +87,10 @@ public:
             iter++;
         }
 
-
         if(iter >= max_iter)
             throw std::runtime_error("Newton does not converge");
 
         return approx_x;
-
-        //std::cout << "Values (x, x_k, f_i, dt)" << x << " " << x_i << " " << fx_i << " " << step << std::endl;
     };
     
 private:
