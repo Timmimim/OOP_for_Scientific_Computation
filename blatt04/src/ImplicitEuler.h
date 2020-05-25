@@ -3,7 +3,6 @@
 
 #include <functional>
 
-#include "../../blatt02/autodiff/ad.hh"
 #include "../../blatt03/matrix.h"
 #include "../../blatt03/vector.h"
 #include "matrix_util.h"
@@ -31,46 +30,71 @@ public:
         for (size_t i = 1; i <= N; ++i){
             data[0][i] = x(i-1);
         }
-
-        Matrix jacobi_g_inverse(N);
-        Matrix const ID = MatUtil::id(N);
-
-        /**
-         * Calculate g(x^k) using the Ad::SimpleAd class
-         * Current implementation of Ad only works for a double param at a time
-         * --> run stepwise per scalar, which is possible since g(x) uses addition only
-         */
-        Vector g(N);      // resulting vector g(x)
-        auto f_x = _problem->f();  // full vector f(x)
-        // use only f_x[i]
-        auto g_x = [](Ad::SimpleAd x, double x_k, double f_i, double dt) {return x_k - x + dt*f_i;};
         
+        Vector fx = _problem->f(x);
+        auto g_x = [](Vector x_init, Vector x_k, Vector fx, double dt) {return x_k - x_init + dt*fx;};
+
         while (t < _T)
         {
-            // calculate each scalar to g(x)
-            for (size_t i = 0; i<N; ++i)
-                g(i) = newton(g_x, Ad::SimpleAd(x(i)), x(i), f_x[i], _dt);
-
-            // g' = J_g^-1 = (ID - dt*J_f)^-1
-            MatUtil::invert(ID - _dt*_problem->JacobiMatrix_f(), N, jacobi_g_inverse);
-            
-            // perform iteration step  x_n+1 = x_n - g(x)/g'(x) = x_n * J_g^-1 * g(x) 
-            Vector implicit_update(N);
-            jacobi_g_inverse.mv(g, implicit_update);
-            x -= implicit_update;
-
+            Vector x_init ({1.,1.,1.});
+            x = newton(g_x, x_init, x, fx, _dt);
+            std::cout << "Newton iteration number " << t << std::endl;
             std::array<double,N+1> result;
             result[0] = t;
 
             for (size_t i = 0; i < N; ++i){
                 result[i+1] = x(i);
             }
+
             data.push_back(result);
-            _problem->updateData(f_x);
+            
             t += _dt;
         }
         return data;
     }
+
+    Vector newton(std::function<Vector(Vector, Vector, Vector, double)> g, Vector x_init, Vector x_k, Vector fx, double step)
+    {
+        const double tol = 1e-6;
+        const int max_iter = 20;
+        int iter = 0;
+        Vector approx_x(x_init);
+        Vector update_summand(N);
+        /**
+         * Calculate g(x^k)
+         */
+        //Vector fx = _problem->f(x_n);
+        Vector gx = g(approx_x, x_k, fx, step);
+
+        Matrix jacobi_g_inverse(N);
+        Matrix const ID = MatUtil::id(N);
+
+        while (iter <= max_iter)
+        {
+            // g' = J_g^-1 = (ID - dt*J_f)^-1
+            MatUtil::invert(ID - _dt*_problem->JacobiMatrix_f(x_k), N, jacobi_g_inverse);
+            
+            // perform iteration step  x_n+1 = x_n - g(x)/g'(x) = x_n * J_g^-1 * g(x) 
+            jacobi_g_inverse.mv(gx, update_summand);
+            approx_x -= update_summand;
+
+            gx = g(approx_x, x_k, fx, step);
+
+            std::cout << "Current Values:\n" << "approx_x: " << approx_x << "x_k: " << x_k << "fx: " << fx << "gx: " << gx << std::endl;
+            
+            if(gx.normL1() < tol) break;
+            iter++;
+        }
+
+
+        if(iter >= max_iter)
+            throw std::runtime_error("Newton does not converge");
+
+        return approx_x;
+
+        //std::cout << "Values (x, x_k, f_i, dt)" << x << " " << x_i << " " << fx_i << " " << step << std::endl;
+    };
+    
 private:
     ODE<N> *_problem;
     std::array<double,N> _initial_distribution;
@@ -78,31 +102,6 @@ private:
     double _dt;
     double _T;
 };
-
-double newton(std::function<Ad::SimpleAd(Ad::SimpleAd, double, double, double)> f, Ad::SimpleAd start, double x_i, double fx_i, double step)
-    {
-        const double tol = 1e-13;
-        const int max_iter = 20;
-        int iter = 0;
-        double x(start);
-        Ad::SimpleAd fx = f(Ad::SimpleAd(x), x_i, fx_i, step);
-        // f is defined by:
-        //                      x_k - x + dt*f_i
-
-        std::cout << "Values (x, x_k, f_i, dt)" << x << " " << x_i << " " << fx_i << " " << step << std::endl;
-
-        std::cout << "Explicit Solver running into newton" << std::endl;
-        for(; iter < max_iter;++iter){
-            x = x - fx.value() / fx.derivative();
-            fx = f(Ad::SimpleAd(x), x_i, fx_i, step);
-
-            std::cout << "x: " << x << ", fx: " << fx.value() << " " << fx.derivative() << std::endl;
-            if(std::abs(fx.value()) < tol) break;
-        }
-        if(iter >= max_iter)
-            throw std::runtime_error("Newton does not converge");
-        return x;
-    };
 
 // template class ImplicitEuler<3ul>;
 
