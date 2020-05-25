@@ -116,7 +116,7 @@ public:
     assert(this->_len == other.size());
     for(int i = 0; i<_len; ++i)
     {
-      _data[i] - other(i);
+      _data[i] -= other(i);
     }
     return *this;
   }
