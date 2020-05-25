@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <istream>
 
 #include "ODESolver.h"
 #include "ODE.h"
@@ -29,6 +30,7 @@ public:
         while(t < _T)
         {
             auto dx = _problem->f();
+
             std::array<double,N+1> result;
             result[0] = t;
 

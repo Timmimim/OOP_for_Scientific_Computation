@@ -13,6 +13,8 @@ template class ODESolver<3ul>;
 template class ExplicitEuler<3ul>; 
 template class ImplicitEuler<3ul>; 
 
+
+
 int main()
 {
     std::cout << "Starting" << std::endl;
@@ -23,8 +25,11 @@ int main()
     std::cout << "Explicit Constructor works" << std::endl;
     ImplicitEuler<3> implicit_euler(sir_imp, 0, 1, 100);
     std::cout << "Implicit Constructor works" << std::endl;
+
     auto explicit_solution = explicit_euler.solve();
     std::cout << "Explicit Solver works" << std::endl;
     auto implicit_solution = implicit_euler.solve();
     std::cout << "Implicit Solver works" << std::endl;
+
+    
 }

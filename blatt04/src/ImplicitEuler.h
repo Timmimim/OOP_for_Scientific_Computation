@@ -36,9 +36,10 @@ public:
 
         while (t < _T)
         {
-            Vector x_init ({1.,1.,1.});
+            Vector x_init ({0.,0.,0.});
+            
             x = newton(g_x, x_init, x, fx, _dt);
-            std::cout << "Newton iteration number " << t << std::endl;
+            
             std::array<double,N+1> result;
             result[0] = t;
 
@@ -55,8 +56,8 @@ public:
 
     Vector newton(std::function<Vector(Vector, Vector, Vector, double)> g, Vector x_init, Vector x_k, Vector fx, double step)
     {
-        const double tol = 1e-6;
-        const int max_iter = 20;
+        const double tol = 1e-13;
+        const int max_iter = 25;
         int iter = 0;
         Vector approx_x(x_init);
         Vector update_summand(N);
@@ -76,11 +77,10 @@ public:
             
             // perform iteration step  x_n+1 = x_n - g(x)/g'(x) = x_n * J_g^-1 * g(x) 
             jacobi_g_inverse.mv(gx, update_summand);
-            approx_x -= update_summand;
+            approx_x += update_summand;
 
+            Vector fx = _problem->f(approx_x);
             gx = g(approx_x, x_k, fx, step);
-
-            std::cout << "Current Values:\n" << "approx_x: " << approx_x << "x_k: " << x_k << "fx: " << fx << "gx: " << gx << std::endl;
             
             if(gx.normL1() < tol) break;
             iter++;
