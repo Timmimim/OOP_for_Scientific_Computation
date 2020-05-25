@@ -95,7 +95,7 @@ public:
     assert(this->_len == other.size());
     for(int i = 0; i<_len; ++i)
     {
-      _data[i] + other(i);
+      _data[i] += other(i);
     }
     return *this;
   }
@@ -196,13 +196,11 @@ Vector operator* (const double factor, const Vector& vector)
 // C++ template to print vector container elements 
 std::ostream& operator<<(std::ostream& os, const Vector& v) 
 { 
-    os << "["; 
     for (int i = 0; i < v.size(); ++i) { 
         os << v(i); 
         if (i != v.size() - 1) 
             os << ", "; 
     } 
-    os << "]\n"; 
     return os; 
 } 
 
