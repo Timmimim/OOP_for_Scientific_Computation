@@ -9,45 +9,51 @@
 class Vector{
 public:
   // basic constructor
-  Vector(unsigned int length) : _len(length), _data(new double[length]) {}
+  Vector(unsigned int length) : _len(length), _data(std::vector<double>(length)) {}
   
   // destructor
-  ~Vector() { delete[] _data; }
+  ~Vector() { _data.erase(_data.begin(),_data.end());}
 
   // copy constructor
   Vector(const Vector& other)
   {
     _len = other.size();
-    _data = new double[_len];
-    std::copy(other._data, other._data+other.size(), _data);
+    _data = other.data();
   }
 
   // move constructor
   Vector(Vector&& other)
   {
-    _data = other._data;
+    _data.swap(other._data);
     _len = other._len;
-    other._data = nullptr;
+    other._data.erase(other._data.begin(), other._data.end());
     other._len = 0;
   }
 
   Vector(double* data, unsigned int size)
   {
     _len = size;
-    _data = new double[_len];
-    std::copy(data, data+size, _data);
+    _data = std::vector<double>(data,data+size);
+  }
+
+  Vector(const std::vector<double> data)
+  {
+    _len = data.size();
+    _data = data;
+  }
+
+  Vector(std::vector<double>&& data)
+  {
+    _len = data.size();
+    _data.swap(data);
   }
 
   // assignment constructor
   Vector& operator= (const Vector& other)
   {
     if (this == &other) return *this;
-    if(other.size() != size()){
-      delete[] _data;
-      _len = other.size();
-      _data = new double[_len];
-    }
-    std::copy(other._data, other._data+other.size(), _data);
+    _len = other.size();
+    _data = other._data; 
     return *this;
   }
 
@@ -55,10 +61,9 @@ public:
   Vector& operator= (Vector&& other)
   {
     if (this == &other) return *this;
-    delete[] _data;
-    _data = other._data;
+    _data.swap(other._data);
     _len = other._len;
-    other._data = nullptr;
+    other._data.erase(other._data.begin(), other._data.end());
     other._len = 0;
     return *this;
   }
@@ -163,6 +168,10 @@ public:
     }
     return norm;
   }
+  
+  std::vector<double> data() const {
+    return _data;
+  }
 
   unsigned int size() const{
     return _len;
@@ -170,7 +179,7 @@ public:
   
 private:
   unsigned int _len;
-  double * _data;
+  std::vector<double> _data;
 };
 
 Vector operator* (const double factor, const Vector& vector)
