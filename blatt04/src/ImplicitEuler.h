@@ -41,7 +41,7 @@ public:
             x = newton(g_x, x_init, x, fx, _dt);
             
             std::array<double,N+1> result;
-            result[0] = t;
+            result[0] = t+1;
 
             for (size_t i = 0; i < N; ++i){
                 result[i+1] = x(i);

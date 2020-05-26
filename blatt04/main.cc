@@ -16,10 +16,13 @@ template class ImplicitEuler<3ul>;
 
 std::ostream& operator<< (std::ostream& os, std::array<double,4> arr)
 {
-    for (int i = 0; i < arr.size(); ++i) { 
+    if(arr[0] == arr[1] && arr[0] == arr[2] && arr[0] ==  arr[3] && arr[0] == 0)
+        return os;
+
+    for (int i = 0; i < arr.size(); ++i) {
         os << arr[i]; 
         if (i != arr.size() - 1) 
-            os << ", "; 
+            os << ","; 
     } 
     os << "\n";
     return os; 
