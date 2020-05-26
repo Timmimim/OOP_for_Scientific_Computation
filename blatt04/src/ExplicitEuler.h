@@ -5,6 +5,7 @@
 #include <array>
 #include <istream>
 
+#include "../../blatt03/vector.h"
 #include "ODESolver.h"
 #include "ODE.h"
 
@@ -17,29 +18,32 @@ public:
         : _problem(&problem), _initial_distribution(problem.getData()), _t(start), _dt(step), _T(end)  {};
 
     std::vector<std::array<double,N+1>> solve () {
-        std::array<double,N> x = _initial_distribution;
+        Vector x(N);
+        for (size_t i = 0; i<N; ++i)
+        {    
+            x(i) = _initial_distribution[i];
+        }
 
         double t = _t;
 
         std::vector<std::array<double,N+1>> data(N);
         data[0][0] = t;
         for (size_t i = 1; i <= N; ++i){
-            data[0][i] = x[i-1];
+            data[0][i] = x(i-1);
         }
 
         while(t < _T)
         {
-            auto dx = _problem->f();
+            auto dx = _problem->f(x);
 
             std::array<double,N+1> result;
-            result[0] = t;
+            result[0] = t+1;
 
             for (size_t i = 0; i < N; ++i){
-                x[i] += _dt * dx[i];
-                result[i+1] = x[i];
+                x(i) += _dt * dx(i);
+                result[i+1] = x(i);
             }
             data.push_back(result);
-            _problem->updateData(dx);
             t += _dt;
         }
         return data;
