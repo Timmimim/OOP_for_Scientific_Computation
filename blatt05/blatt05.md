@@ -1,45 +1,31 @@
 # Übungsblatt 04 - 25. Mai 2020
 Bearbeitung bis zum **08. Juni**.
 
-## Aufgabe 1 (Function templates)
-
-Schreiben Sie ein Funktionstemplate
-`two_norm` das von einem beliebigen iterierbarem Container die
-2-Norm berechnet.
-
-*Hinweis*: Über die Elemente in einem solchen Container lässt sich
-z.B. so iterieren:
-```
-for(auto element: container){
-...
-}
-```
-
-## Aufgabe 2 (Class templates)
-Schreiben Sie in Klassentemplate `Polynom` die ein Polynom `n`-ten
-Grades implementiert. Als
-template-Parameter sollen der Polynomgrad `n` sowie der numerische Typ
-angegeben werden können. Außerdem soll sich die Klasse durch mit
+## Aufgabe 1 (Class Templates)
+Schreiben Sie ein Klassentemplate `Polynom` die ein Polynom `n`-ten
+Grades implementiert. Als template-Parameter sollen der Polynomgrad
+`n` sowie der numerische Typ angegeben werden können. Außerdem soll
+sich die Klasse durch mit
 einem `std::array` initialisieren lassen und einen über den `operator()`
 auswerten lassen.
+Implementieren Sie außerdem den `operator *= (const K& alpha)`, wobei `K`
+der numerische Type ist, das ein Polynom mit dem Faktor `alpha` skaliert.
 
+## Aufgabe 2 (Function Templates)
+- Schreiben Sie ein freies Funktionstemplates `differntiate` welches
+  als Parameter ein `Polynom` $`n`$-ten Grades als Parameter erhält, die
+  Ableitung berechnet und diese als Polynom $`n-1`$-Grades zurück gibt.
 
-## Aufgabe 3 (statischer vs. dynamischer Polymorphismus)
-Implementieren Sie noch einmal ein Programm, das das SIR Modell mit dem
-explizitem Euler-Verfahren löst. Verwenden Sie dabei nur statischen
-Polymorphismus und std::array (bzw. einen darauf basierende Vektorklasse).
+- Schreiben Sie freie `operator`en für die mathematischen Operatoren
+  für Addition, Subtraktion und Multiplikation für Polynome vom Grad `n` und `m`.
+  Überlegen Sie sich insbesondere was ein geeigneter Rückgabetyp ist.
 
-Verwenden Sie die `chrono` Bibliothek um die Laufzeit des Programms zu
-bestimmen. Das können Sie z.B. so
-```
-#include <chrono>
-...
-auto start = std::chrono::steady_clock::now();
-...
-auto end = std::chrono::steady_clock::now();
-std::chrono::duration<double> elapsed_seconds = end-start;
-std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
-```
+## Aufgabe 3 (Lagrange Interpolation)
+- Schreiben Sie eine Funktion `LagrangeBasis` die zu gegebenen
+  Stützstellen, gegeben in einem `std::array<double, K>` die
+  zugehörige Lagrange-Basis berechnet.
 
-Messen Sie auch die Laufzeit Ihrer Implementierung vom letzten
-Übungsblatt und vergleichen Sie diese mit der statischen Implementierung.
+- Erstellen Sie ein geeignetes Testprogramm um die Lagrange-Basis zu testen.
+
+*Hinweis*: Eine Beschreibung der Lagrange-Polynome finden Sie z.B. auf
+[Wikipedia](https://de.wikipedia.org/wiki/Lagrange-Polynom).
