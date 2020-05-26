@@ -1,6 +1,7 @@
 # vscode config files & dirs
 .vscode
 
-# test files and binaries
+# test files, generated data and binaries
 **/build/
+**/data/
 **/test.cc
