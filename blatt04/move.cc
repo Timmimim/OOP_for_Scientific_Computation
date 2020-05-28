@@ -4,10 +4,14 @@ class A{
 public:
   A (){ std::cout << "default ctor" << std::endl;}
   A (const A&) { std::cout << "copy ctor" << std::endl;}
-  A (const A&&) { std::cout << "move ctor" << std::endl;}
+  A (A&&) { std::cout << "move ctor" << std::endl;}
   ~A(){};
 
   A& operator=(const A&){ std::cout << "copy assignment" << std::endl;
+    return *this;
+  }
+
+  A& operator=(A&&) { std::cout << "move assignment" << std::endl;
     return *this;
   }
 };
