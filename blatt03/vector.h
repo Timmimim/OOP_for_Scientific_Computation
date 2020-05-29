@@ -10,7 +10,7 @@
 class Vector{
 public:
   // basic constructor
-  Vector(unsigned int length) : _len(length), _data(std::vector<double>(length)) {}
+  Vector(unsigned int length) : _data(std::vector<double>(length)) {}
   
   // destructor
   ~Vector() { _data.erase(_data.begin(),_data.end());}
@@ -18,7 +18,6 @@ public:
   // copy constructor
   Vector(const Vector& other)
   {
-    _len = other.size();
     _data = other.data();
   }
 
@@ -26,26 +25,16 @@ public:
   Vector(Vector&& other)
   {
     _data.swap(other._data);
-    _len = other._len;
     other._data.erase(other._data.begin(), other._data.end());
-    other._len = 0;
   }
 
   Vector(double* data, unsigned int size)
   {
-    _len = size;
     _data = std::vector<double>(data,data+size);
   }
 
-  /*Vector(const std::vector<double> data)
-  {
-    _len = data.size();
-    _data = data;
-  }*/
-
   Vector(std::vector<double>&& data)
   {
-    _len = data.size();
     _data.swap(data);
   }
 
@@ -53,7 +42,6 @@ public:
   Vector& operator= (const Vector& other)
   {
     if (this == &other) return *this;
-    _len = other.size();
     _data = other._data; 
     return *this;
   }
@@ -63,26 +51,24 @@ public:
   {
     if (this == &other) return *this;
     _data.swap(other._data);
-    _len = other._len;
     other._data.erase(other._data.begin(), other._data.end());
-    other._len = 0;
     return *this;
   }
 
   double& operator()(unsigned int i){
-    assert(i < _len);
+    assert(i < this->size());
     return _data[i];
   }
 
   const double& operator()(unsigned int i) const{
-    assert(i < _len);
+    assert(i < this->size());
     return _data[i];
   }
 
   Vector operator+ (const Vector other)
   {
-    assert(this->_len == other.size());
-    Vector result(_len);
+    assert(this->size() == other.size());
+    Vector result(this->size());
     for(int i = 0; i<result.size(); ++i)
     {
       result(i) = _data[i] + other(i);
@@ -92,8 +78,8 @@ public:
   
   Vector operator+= (const Vector other)
   {
-    assert(this->_len == other.size());
-    for(int i = 0; i<_len; ++i)
+    assert(this->size() == other.size());
+    for(int i = 0; i<this->size(); ++i)
     {
       _data[i] += other(i);
     }
@@ -102,8 +88,8 @@ public:
 
   Vector operator- (const Vector other)
   {
-    assert(this->_len == other.size());
-    Vector result(_len);
+    assert(this->size() == other.size());
+    Vector result(this->size());
     for(int i = 0; i<result.size(); ++i)
     {
       result(i) = _data[i] - other(i);
@@ -113,8 +99,8 @@ public:
 
   Vector operator-= (const Vector other)
   {
-    assert(this->_len == other.size());
-    for(int i = 0; i<_len; ++i)
+    assert(this->size() == other.size());
+    for(int i = 0; i<this->size(); ++i)
     {
       _data[i] -= other(i);
     }
@@ -123,18 +109,18 @@ public:
 
   Vector operator* (const Vector other)
   {
-    assert(this->_len == other.size());
-    Vector result (this->_len);
-    for (int i = 0; i < _len; ++i)
+    assert(this->size() == other.size());
+    Vector result (this->size());
+    for (int i = 0; i < this->size(); ++i)
       result(i) = this->_data[i] * other(i);
     return result;
   }
 
   const double dot (const Vector other) const
   {
-    assert(this->_len == other.size());
+    assert(this->size() == other.size());
     double result = 0.;
-    for(int i = 0; i < _len; ++i)
+    for(int i = 0; i < this->size(); ++i)
     {
       result += _data[i] * other(i);
     }
@@ -144,7 +130,7 @@ public:
   const double normL1() const
   {
     double norm = 0.;
-    for(int i = 0; i<_len; ++i)
+    for(int i = 0; i<this->size(); ++i)
       norm += std::abs(_data[i]);
     return norm;
   }
@@ -152,7 +138,7 @@ public:
   const double normL2() const
   {
     double norm = 0.;
-    for(int i = 0; i<_len; ++i)
+    for(int i = 0; i<this->size(); ++i)
       norm += std::pow(_data[i], 2);
     return std::sqrt(norm);
   }
@@ -160,7 +146,7 @@ public:
   const double normLInf() const
   {
     double norm = 0.;
-    for (size_t i = 0; i < _len; i++)
+    for (size_t i = 0; i < this->size(); i++)
     {
       double absolute_of_scalar = std::abs(_data[i]);
       if (absolute_of_scalar > norm)
@@ -175,11 +161,10 @@ public:
   }
 
   unsigned int size() const{
-    return _len;
+    return _data.size();
   }
   
 private:
-  unsigned int _len;
   std::vector<double> _data;
 };
 

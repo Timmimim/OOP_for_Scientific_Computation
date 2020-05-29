@@ -1,7 +1,7 @@
-#include "vector.h"
-
 #ifndef MATRIX_H
 #define MATRIX_H
+
+#include "vector.h"
 
 class Matrix{
 public:
@@ -208,8 +208,8 @@ public:
       y(row) = step_result;
     }
   }
-  
-  std::vector<double> operator * (const std::vector<double>& vector) const
+
+  Vector operator * (Vector& vector) const
   {
     assert(_cols == vector.size());
     std::vector<double> result(_rows);
@@ -217,7 +217,7 @@ public:
     {
       double step_result=0.;
       for (size_t col = 0; col < _cols; ++col)
-        step_result += _data[row][col] * vector[col];
+        step_result += _data[row][col] * vector(col);
       result[row] = step_result;
     }
     return result;
@@ -257,35 +257,5 @@ Matrix operator* (const Matrix& mat, const double factor)
     }
     return result;
   }
-
-  Matrix operator* (const Matrix& mat, const int factor)
-  {
-    Matrix result(mat.rows(), mat.cols());
-
-    for(size_t i=0 ; i<mat.rows(); i++)
-    {
-      for(size_t j=0 ; j<mat.cols(); j++) 
-      {        
-        result(i,j) = mat(i,j) * factor;
-      }
-    }
-    return result;
-  }
-  
-  Matrix operator* (const int factor, const Matrix& mat)
-  {
-    Matrix result(mat.rows(), mat.cols());
-
-    for(size_t i=0 ; i<mat.rows(); i++)
-    {
-      for(size_t j=0 ; j<mat.cols(); j++) 
-      {        
-        result(i,j) = mat(i,j) * factor;
-      }
-    }
-    return result;
-  }
-
-
 
 #endif
