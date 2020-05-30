@@ -15,7 +15,7 @@ public:
     ImplicitEuler (ODE<N> &problem, const double start, const double step, const double end)
         : _problem(&problem), _initial_distribution(problem.getData()), _t(start), _dt(step), _T(end)  {};
 
-    std::vector<std::array<double,N+1>> solve () {
+    std::vector<std::array<double,N+1>> solve () final {
         Vector x(N);
         for (size_t i = 0; i<N; ++i)
         {    
