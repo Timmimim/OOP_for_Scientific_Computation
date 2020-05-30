@@ -19,25 +19,21 @@ namespace newton
         const double tol = 1e-13;
         const int max_iter = 25;
         int iter = 0;
-        size_t N = x_k.size();
+        size_t _N = x_k.size();
 
         Vector approx_x(x_0);
-        Vector update_summand(N);
+        Vector update_summand(_N);
+        
         Vector fx = f(x_k);
-
-        /**
-         * Calculate g(x^k)
-         */
-        //Vector fx = _problem->f(x_n);
         Vector gx = g(approx_x, x_k, fx, step);
 
-        Matrix jacobi_g_inverse(N);
-        Matrix const ID = MatUtil::id(N);
+        Matrix jacobi_g_inverse(_N);
+        Matrix const ID = MatUtil::id(_N);
 
         while (iter <= max_iter)
         {
             // g' = J_g^-1 = (ID - dt*J_f)^-1
-            MatUtil::invert(ID - step*jacobi(x_k), N, jacobi_g_inverse);
+            MatUtil::invert(ID - step*jacobi(x_k), _N, jacobi_g_inverse);
             
             // perform iteration step  x_n+1 = x_n - g(x)/g'(x) = x_n * J_g^-1 * g(x) 
             jacobi_g_inverse.mv(gx, update_summand);

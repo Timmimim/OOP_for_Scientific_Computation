@@ -39,7 +39,6 @@ public:
         {
             Vector x_init ({0.,0.,0.});
             
-            //x = newton(g_x, x_init, x, fx, _dt);
             x = newton::multi_dimensional(g_x, f, jac, x_init, x, _dt);
 
             std::array<double,N+1> result;
@@ -63,7 +62,5 @@ private:
     double _dt;
     double _T;
 };
-
-// template class ImplicitEuler<3ul>;
 
 #endif

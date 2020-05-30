@@ -51,15 +51,11 @@ public:
 
 
 private:
-
     ODE<N> *_problem;
-    // std::function<std::array<double, N>(std::array<double,N>)> _problem;
     std::array<double,N> _initial_distribution;
     double _t;
     double _dt;
     double _T;
 };
-
-// template class ExplicitEuler<3ul>;
 
 #endif
