@@ -7,6 +7,9 @@ template<typename T, size_t N, typename = typename std::enable_if<std::is_arithm
 class Polynomial
 {
 public:
+    Polynomial() 
+        : _coefficients(std::array<T,N>()) {};
+
     Polynomial(std::array<T,N> coeff)
         : _coefficients(coeff){}
 
@@ -65,7 +68,8 @@ std::ostream& operator<< (std::ostream& os, const Polynomial<T,N>& poly)
         else {}
     }
     if (poly(0) > 0) os << " + " << poly(0) << std::endl;
-    if (poly(0) < 0) os << " - " << std::abs(poly(0)) << std::endl;
+    else if (poly(0) < 0) os << " - " << std::abs(poly(0)) << std::endl;
+    else os << std::endl;
     return os;
 }
 
@@ -74,8 +78,7 @@ template<typename T1, size_t M,
 typename std::enable_if<std::is_floating_point<T1>::value || std::is_floating_point<T2>::value, Polynomial<double,std::max(M,N)>>::type
 operator+ (Polynomial<T1,M> first, Polynomial<T2,N> second)
 {
-    auto res_data = std::array<double,std::max(M,N)>();
-    auto res = Polynomial<double,std::max(M,N)> (res_data);
+    auto res = Polynomial<double,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
         if (i >= M) res(i) = second(i);
@@ -94,8 +97,7 @@ template<typename T1, size_t M,
 typename std::enable_if<std::is_integral<T1>::value && std::is_integral<T2>::value, Polynomial<int,std::max(M,N)>>::type
 operator+ (Polynomial<T1,M> first, Polynomial<T2,N> second)
 {
-    auto res_data = std::array<int,std::max(M,N)>();
-    auto res = Polynomial<int,std::max(M,N)> (res_data);
+    auto res = Polynomial<int,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
         if (i >= M) res(i) = second(i);
@@ -114,9 +116,7 @@ template<typename T1, size_t M,
 typename std::enable_if<std::is_floating_point<T1>::value || std::is_floating_point<T2>::value, Polynomial<double,std::max(M,N)>>::type
 operator- (Polynomial<T1,M> first, Polynomial<T2,N> second)
 {
-    size_t max_size = std::max(M,N);
-    auto res_data = std::array<double,std::max(M,N)>();
-    auto res = Polynomial<double,std::max(M,N)> (res_data);
+    auto res = Polynomial<double,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
         if (i >= M) res(i) = -second(i);
@@ -135,8 +135,7 @@ template<typename T1, size_t M,
 typename std::enable_if<std::is_integral<T1>::value && std::is_integral<T2>::value, Polynomial<int,std::max(M,N)>>::type
 operator- (Polynomial<T1,M> first, Polynomial<T2,N> second)
 {
-    auto res_data = std::array<int,std::max(M,N)>();
-    auto res = Polynomial<int,std::max(M,N)> (res_data);
+    auto res = Polynomial<int,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
         if (i >= M) res(i) = -second(i);
@@ -145,6 +144,39 @@ operator- (Polynomial<T1,M> first, Polynomial<T2,N> second)
         else
         {
             res(i) = first(i) - second(i);
+        }
+    }
+    return res;
+}
+
+
+template<typename T1, size_t M, 
+        typename T2, size_t N>
+typename std::enable_if<std::is_floating_point<T1>::value || std::is_floating_point<T2>::value, Polynomial<double, M+N-1>>::type
+operator* (Polynomial<T1,M> first, Polynomial<T2,N> second)
+{
+    auto res = Polynomial<double, M+N-1>();
+    for (size_t i = 0; i < M; ++i)
+    {
+        for (size_t j = 0; j < N; j++)
+        {
+            res(i+j) += first(i) * second(j);
+        }
+    }
+    return res;
+}
+
+template<typename T1, size_t M, 
+        typename T2, size_t N>
+typename std::enable_if<std::is_integral<T1>::value && std::is_integral<T2>::value, Polynomial<int, M+N-1>>::type
+operator* (Polynomial<T1,M> first, Polynomial<T2,N> second)
+{
+    auto res = Polynomial<int, M+N-1>();
+    for (size_t i = 0; i < M; ++i)
+    {
+        for (size_t j = 0; j < N; j++)
+        {
+            res(i+j) += first(i) * second(j);
         }
     }
     return res;
