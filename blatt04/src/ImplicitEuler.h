@@ -5,7 +5,7 @@
 
 #include "../../blatt03/matrix.h"
 #include "../../blatt03/vector.h"
-#include "matrix_util.h"
+#include "newton.h"
 #include "ODESolver.h"
 
 template <unsigned long N>
@@ -31,15 +31,17 @@ public:
             data[0][i] = x(i-1);
         }
         
-        Vector fx = _problem->f(x);
-        auto g_x = [](Vector x_init, Vector x_k, Vector fx, double dt) {return x_k - x_init + dt*fx;};
+        auto f = [this](Vector x) { return _problem->f(x);};
+        auto g_x = [this](Vector x_0, Vector x_k, Vector f_x, double dt) {return x_k - x_0 + dt*f_x;};
+        auto jac = [this](Vector x){return _problem->JacobiMatrix_f(x);};
 
         while (t < _T)
         {
             Vector x_init ({0.,0.,0.});
             
-            x = newton(g_x, x_init, x, fx, _dt);
-            
+            //x = newton(g_x, x_init, x, fx, _dt);
+            x = newton::multi_dimensional(g_x, f, jac, x_init, x, _dt);
+
             std::array<double,N+1> result;
             result[0] = t+1;
 
@@ -53,45 +55,6 @@ public:
         }
         return data;
     }
-
-    Vector newton(std::function<Vector(Vector, Vector, Vector, double)> g, Vector x_init, Vector x_k, Vector fx, double step)
-    {
-        const double tol = 1e-13;
-        const int max_iter = 25;
-        int iter = 0;
-        Vector approx_x(x_init);
-        Vector update_summand(N);
-        
-        /**
-         * Calculate g(x^k)
-         */
-        //Vector fx = _problem->f(x_n);
-        Vector gx = g(approx_x, x_k, fx, step);
-
-        Matrix jacobi_g_inverse(N);
-        Matrix const ID = MatUtil::id(N);
-
-        while (iter <= max_iter)
-        {
-            // g' = J_g^-1 = (ID - dt*J_f)^-1
-            MatUtil::invert(ID - _dt*_problem->JacobiMatrix_f(x_k), N, jacobi_g_inverse);
-            
-            // perform iteration step  x_n+1 = x_n - g(x)/g'(x) = x_n * J_g^-1 * g(x) 
-            jacobi_g_inverse.mv(gx, update_summand);
-            approx_x += update_summand;
-
-            Vector fx = _problem->f(approx_x);
-            gx = g(approx_x, x_k, fx, step);
-            
-            if(gx.normL1() < tol) break;
-            iter++;
-        }
-
-        if(iter >= max_iter)
-            throw std::runtime_error("Newton does not converge");
-
-        return approx_x;
-    };
     
 private:
     ODE<N> *_problem;

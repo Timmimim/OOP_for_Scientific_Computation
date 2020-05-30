@@ -12,18 +12,9 @@ class SIR :
         public ODE<N> {
 public:
     SIR(double beta, double gamma, std::array<double,3> x)
-        : _beta(beta), _gamma(gamma), _S(x[0]), _I(x[1]), _R(x[2]) 
-    {
-        _N = _S + _I + _R;
-    };
+        : _beta(beta), _gamma(gamma), _S(x[0]), _I(x[1]), _R(x[2]) {};
 
-    std::array<double,N> f() override {
-        double infected = _beta * _S*_I / (_N);
-        double recovered = _gamma * _I;
-        return {-infected, infected-recovered, recovered};
-    };
-
-    Vector f(Vector data) override {
+    Vector f(Vector data) final {
         double S = data(0);
         double I = data(1);
         double R = data(2);
@@ -34,15 +25,7 @@ public:
         return res;
     };
 
-    Matrix JacobiMatrix_f() override
-    {   
-        std::vector<double> row1 ({(-(_beta * _I / _N)),   (-(_beta + _S / _N)),          0.});
-        std::vector<double> row2 ({_beta * _I / _N,       (_beta * _S / _N)-_gamma,       0.});
-        std::vector<double> row3 ({0.,                     _gamma,                        0.});
-        std::vector<std::vector<double>> matrix ({row1, row2, row3});
-        return matrix;
-    }
-
+/*
     Matrix JacobiMatrix_f (std::array<double,N> data) override
     {
         auto [S,I,R] = data;
@@ -53,8 +36,9 @@ public:
         std::vector<std::vector<double>> matrix ({row1, row2, row3});
         return matrix;
     }
-    
-    Matrix JacobiMatrix_f (Vector data) override
+  */  
+ 
+    Matrix JacobiMatrix_f (Vector data) final
     {
         double S = data(0);
         double I = data(1);
@@ -67,21 +51,14 @@ public:
         return matrix;
     }
 
-    std::array<double,N> getData() override
+    std::array<double,N> getData() const final
     {
         return {_S,_I,_R};
     }
 
-    virtual std::vector<double> getParameters()
+    std::vector<double> getParameters() const
     {
         return {_beta, _gamma};
-    }
-
-    void updateData(std::array<double,3> update_summands) override
-    {
-        _S += update_summands[0];
-        _I += update_summands[1];
-        _R += update_summands[2];
     }
 
 private:
@@ -90,9 +67,6 @@ private:
     double _S;
     double _I;
     double _R;
-    double _N;
 };
-
-//template class SIR<3ul>;
 
 #endif
