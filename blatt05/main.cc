@@ -9,7 +9,7 @@ int main()
     std::array<int,4> data_B {{4,3,2,1}};
     std::array<double,3> data_X {{1.,2.5,3.}};
     std::array<double,3> data_Z {{1.5,3.,2.}};
-    std::array<double,4> data_Y {{4.,3.5,2.,1.}};
+    std::array<double,4> data_Y {{4.,3.5,2.,5.7}};
 
     Polynomial<int,3> A(data_A);
     Polynomial<int,4> B(data_B);
@@ -40,4 +40,13 @@ int main()
     
     auto J = X * B;
     std::cout << J << std::endl;
+
+    auto K = differentiate(A);
+    std::cout << K << std::endl;
+
+    auto L = differentiate(Y);  
+    std::cout << L << std::endl;
+
+    auto M = differentiate(differentiate(differentiate(Y)));  
+    std::cout << M << std::endl;
 }

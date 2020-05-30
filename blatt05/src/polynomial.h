@@ -57,20 +57,53 @@ private:
 template<typename T, size_t N>
 std::ostream& operator<< (std::ostream& os, const Polynomial<T,N>& poly)
 {
+    assert (N >= 1);
     int i = N-1;
     os << poly(i) << "x^" << i;
-    for (int i = N-2; i > 0; --i)
+    if(N > 1)
     {
-        if (poly(i) > 0)
-            os << " + " << std::abs(poly(i)) << "x^" << i;
-        else if (poly(i) < 0)
-            os << " - " << std::abs(poly(i)) << "x^" << i;
-        else {}
+        for (int i = N-2; i > 0; --i)
+        {
+            if (poly(i) > 0)
+                os << " + " << std::abs(poly(i)) << "x^" << i;
+            else if (poly(i) < 0)
+                os << " - " << std::abs(poly(i)) << "x^" << i;
+            else {}
+        }
+        if (poly(0) > 0) os << " + " << poly(0) << std::endl;
+        else if (poly(0) < 0) os << " - " << std::abs(poly(0)) << std::endl;
+        else os << std::endl;
     }
-    if (poly(0) > 0) os << " + " << poly(0) << std::endl;
-    else if (poly(0) < 0) os << " - " << std::abs(poly(0)) << std::endl;
     else os << std::endl;
     return os;
+}
+
+template<typename T, size_t N>
+typename std::enable_if<std::is_floating_point<T>::value, Polynomial<double, N-1>>::type
+differentiate (Polynomial<T,N> factors)
+{
+    assert (N > 1);
+    auto res = Polynomial<double, N-1>();
+    for (size_t i = 1; i < N; ++i)
+    {
+        size_t power = i;
+        res(i-1) = factors(i) * power;
+    }
+    return res;
+}
+
+template<typename T, size_t N>
+typename std::enable_if<std::is_integral<T>::value, Polynomial<int, N-1>>::type
+differentiate (Polynomial<T,N> factors)
+{
+    assert (N > 1);
+    auto res = Polynomial<int, N-1>();
+    for (size_t i = 1; i < N; ++i)
+    {
+        size_t power = i;
+        res(i-1) = factors(i) * power;
+    }
+    return res;
 }
 
 template<typename T1, size_t M, 
