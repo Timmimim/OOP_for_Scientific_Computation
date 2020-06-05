@@ -11,12 +11,43 @@ public:
         : _coefficients(std::array<T,N>()) {};
 
     Polynomial(std::array<T,N> coeff)
-        : _coefficients(coeff){}
+        : _coefficients(coeff){
+            assert(std::abs(coeff[N-1]) >= 1e-13);
+        };
 
     /**
      * TODO: Rule of 5.
      */
-    //========================
+    ~Polynomial() {};
+
+    Polynomial (const Polynomial& other)
+    {
+        _coefficients = other._coefficients;
+    }
+
+    // move constructor
+    Polynomial(Polynomial&& temp)
+    {
+        _coefficients = std::move(temp._coefficients);
+    };
+
+    Polynomial operator= (const Polynomial& other)
+    {
+        _coefficients = other._coefficients;
+        return this;
+    }
+
+    Polynomial operator= (Polynomial&& temp)
+    {
+        _coefficients = std::move(temp);
+        ~temp;
+        return this;
+    }
+
+    //==============================================
+    //==============================================
+    //==============================================
+    //==============================================
 
     T& operator() (unsigned int exponent)
     {
