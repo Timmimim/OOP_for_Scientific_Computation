@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "src/polynomial.h"
+#include "src/polynomial_utils.h"
 
 
 int main()

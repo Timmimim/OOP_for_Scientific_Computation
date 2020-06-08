@@ -1,17 +1,23 @@
+#ifndef POLYNOMIAL_H
+#define POLYNOMIAL_H
+
 #include <iostream>
 #include <array>
 #include <type_traits>
 #include <cassert>
 
-template<typename T, size_t N, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+template<typename T, size_t N>
 class Polynomial
 {
 public:
     Polynomial() 
-        : _coefficients(std::array<T,N>()) {};
+        : _coefficients(std::array<T,N>()) {
+            assert(std::is_arithmetic<T>::value);
+        };
 
     Polynomial(std::array<T,N> coeff)
         : _coefficients(coeff){
+            assert(std::is_arithmetic<T>::value);
             assert(std::abs(coeff[N-1]) >= 1e-13);
         };
 
@@ -245,3 +251,5 @@ operator* (Polynomial<T1,M> first, Polynomial<T2,N> second)
     }
     return res;
 }
+
+#endif
