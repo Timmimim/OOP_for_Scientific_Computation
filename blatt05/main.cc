@@ -50,4 +50,17 @@ int main()
 
     auto M = differentiate(differentiate(differentiate(Y)));  
     std::cout << M << std::endl;
+
+
+    /**
+     * This example is lifted straight from Wikipedia 
+     * (https://de.wikipedia.org/wiki/Polynominterpolation#Beispiel:_Interpolation_der_Tangensfunktion)
+     * which provides a result to compare this implementation to.
+     */
+    std::array<double,5> support_points_x ({-1.5, -0.75, 0., 0.75, 1.5});
+    std::array<double,5> support_points_fx ({-14.101420, -0.931596, 0., 0.931596, 14.101420});
+
+    Polynomial<double,5> interpolation = PU::Interpolation::LagrangeBasis(support_points_x, support_points_fx);
+
+    std::cout << interpolation.trim() << std::endl;
 }
