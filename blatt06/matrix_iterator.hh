@@ -2,7 +2,7 @@
 #define MATRIX_ITERATOR_H
 
 #include "../blatt03/matrix.h"
-#include "csrmatrix.h"
+#include "csrmatrix.hh"
 
 class MatrixColIterator {
   Matrix& _matrix;

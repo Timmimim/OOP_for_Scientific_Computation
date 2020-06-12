@@ -24,7 +24,7 @@ Matrix-Vector Produkt implementieren. Vervollständingen sie den
 `operator*` in der Datei `mv.hh`. Verwenden Sie dabei die Iteratoren aus `matrix_iterator.hh`.
 
 2. Implementieren Sie Iterator und Range Klassen um das
-iterieren über eine `CSRMatrix` zu ermöglichen. Dabei soll nur über
+Iterieren über eine `CSRMatrix` zu ermöglichen. Dabei soll nur über
 nicht-null Einträge iteriert werden. Orientieren Sie sich dabei an den
 bereitgestellten Klassen für `Matrix`.
 
