@@ -5,6 +5,7 @@
 #include <array>
 #include <type_traits>
 #include <cassert>
+#include <cmath>
 
 template<typename T, size_t N>
 class Polynomial
@@ -12,12 +13,12 @@ class Polynomial
 public:
     Polynomial() 
         : _coefficients(std::array<T,N>()) {
-            assert(std::is_arithmetic<T>::value);
+            static_assert(std::is_arithmetic<T>::value, "Only arithmetic parameters permitted as coefficients.");
         };
 
     Polynomial(std::array<T,N> coeff)
         : _coefficients(coeff){
-            assert(std::is_arithmetic<T>::value);
+            static_assert(std::is_arithmetic<T>::value, "Only arithmetic parameters permitted as coefficients.");
             assert(std::abs(coeff[N-1]) >= 1e-13);
         };
 
@@ -40,14 +41,13 @@ public:
     Polynomial operator= (const Polynomial& other)
     {
         _coefficients = other._coefficients;
-        return this;
+        return *this;
     }
 
     Polynomial operator= (Polynomial&& temp)
     {
-        _coefficients = std::move(temp);
-        ~temp;
-        return this;
+        _coefficients = std::move(temp._coefficients);
+        return *this;
     }
 
     //==============================================
@@ -55,16 +55,12 @@ public:
     //==============================================
     //==============================================
 
-    T& operator() (unsigned int exponent)
+    double operator() (double x_val) const
     {
-        assert(exponent < _coefficients.size());
-        return _coefficients[exponent];
-    }
-
-    const T& operator() (unsigned int exponent) const
-    {
-        assert(exponent < _coefficients.size());
-        return _coefficients[exponent];
+        double res = 0.;
+        for (size_t i = 0; i < _coefficients.size(); ++i)
+            res += _coefficients[i] * std::pow(x_val, i);
+        return res;
     }
 
     Polynomial operator*= (const T& alpha)
@@ -74,6 +70,40 @@ public:
             coeff *= alpha;
         }
         return *this;
+    }
+
+    T& coeff (unsigned int exponent)
+    {
+        assert(exponent < _coefficients.size());
+        return _coefficients[exponent];
+    }
+
+    const T& coeff (unsigned int exponent) const
+    {
+        assert(exponent < _coefficients.size());
+        return _coefficients[exponent];
+    }
+
+    Polynomial<T,N-1> trim ()
+    {   
+        std::array<T,N-1> coefficients;
+        if(std::abs(_coefficients[N-1]) <= 1e-13)
+        {
+            std::move(  std::make_move_iterator(_coefficients.begin()), 
+                        std::make_move_iterator(_coefficients.end() - 1),
+                        coefficients.begin());
+        }
+        else
+        {
+            std::cout << _coefficients[N-1] << std::endl;
+        }
+        
+        return Polynomial<T,N-1> (coefficients);
+    }
+
+    size_t size()
+    {
+        return N;
     }
 
     template<typename TYPE, size_t SIZE>
@@ -96,19 +126,19 @@ std::ostream& operator<< (std::ostream& os, const Polynomial<T,N>& poly)
 {
     assert (N >= 1);
     int i = N-1;
-    os << poly(i) << "x^" << i;
+    os << poly.coeff(i) << "x^" << i;
     if(N > 1)
     {
-        for (int i = N-2; i > 0; --i)
+        for (int i = ((int)N)-2; i > 0; --i)
         {
-            if (poly(i) > 0)
-                os << " + " << std::abs(poly(i)) << "x^" << i;
-            else if (poly(i) < 0)
-                os << " - " << std::abs(poly(i)) << "x^" << i;
+            if (poly.coeff(i) > 0)
+                os << " + " << std::abs(poly.coeff(i)) << "x^" << i;
+            else if (poly.coeff(i) < 0)
+                os << " - " << std::abs(poly.coeff(i)) << "x^" << i;
             else {}
         }
-        if (poly(0) > 0) os << " + " << poly(0) << std::endl;
-        else if (poly(0) < 0) os << " - " << std::abs(poly(0)) << std::endl;
+        if (poly.coeff(0) > 0) os << " + " << poly.coeff(0) << std::endl;
+        else if (poly.coeff(0) < 0) os << " - " << std::abs(poly.coeff(0)) << std::endl;
         else os << std::endl;
     }
     else os << std::endl;
@@ -124,21 +154,21 @@ differentiate (Polynomial<T,N> factors)
     for (size_t i = 1; i < N; ++i)
     {
         size_t power = i;
-        res(i-1) = factors(i) * power;
+        res.coeff(i-1) = factors(i) * power;
     }
     return res;
 }
 
 template<typename T, size_t N>
 typename std::enable_if<std::is_integral<T>::value, Polynomial<int, N-1>>::type
-differentiate (Polynomial<T,N> factors)
+differentiate (Polynomial<T,N> to_diff)
 {
     assert (N > 1);
     auto res = Polynomial<int, N-1>();
     for (size_t i = 1; i < N; ++i)
     {
         size_t power = i;
-        res(i-1) = factors(i) * power;
+        res.coeff(i-1) = to_diff.coeff(i) * power;
     }
     return res;
 }
@@ -151,12 +181,12 @@ operator+ (Polynomial<T1,M> first, Polynomial<T2,N> second)
     auto res = Polynomial<double,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
-        if (i >= M) res(i) = second(i);
+        if (i >= M) res.coeff(i) = second.coeff(i);
         else
-        if (i >= N) res(i) = first(i);
+        if (i >= N) res.coeff(i) = first.coeff(i);
         else
         {
-            res(i) = first(i) + second(i);
+            res.coeff(i) = first.coeff(i) + second.coeff(i);
         }
     }
     return res;
@@ -170,12 +200,12 @@ operator+ (Polynomial<T1,M> first, Polynomial<T2,N> second)
     auto res = Polynomial<int,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
-        if (i >= M) res(i) = second(i);
+        if (i >= M) res.coeff(i) = second.coeff(i);
         else
-        if (i >= N) res(i) = first(i);
+        if (i >= N) res.coeff(i) = first.coeff(i);
         else
         {
-            res(i) = first(i) + second(i);
+            res.coeff(i) = first.coeff(i) + second.coeff(i);
         }
     }
     return res;
@@ -189,12 +219,12 @@ operator- (Polynomial<T1,M> first, Polynomial<T2,N> second)
     auto res = Polynomial<double,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
-        if (i >= M) res(i) = -second(i);
+        if (i >= M) res.coeff(i) = -second.coeff(i);
         else
-        if (i >= N) res(i) = first(i);
+        if (i >= N) res.coeff(i) = first.coeff(i);
         else
         {
-            res(i) = first(i) - second(i);
+            res.coeff(i) = first.coeff(i) - second.coeff(i);
         }
     }
     return res;
@@ -208,12 +238,12 @@ operator- (Polynomial<T1,M> first, Polynomial<T2,N> second)
     auto res = Polynomial<int,std::max(M,N)>();
     for (size_t i = 0; i<std::max(M,N); ++i)
     {
-        if (i >= M) res(i) = -second(i);
+        if (i >= M) res.coeff(i) = -second.coeff(i);
         else
-        if (i >= N) res(i) = first(i);
+        if (i >= N) res.coeff(i) = first.coeff(i);
         else
         {
-            res(i) = first(i) - second(i);
+            res.coeff(i) = first.coeff(i) - second.coeff(i);
         }
     }
     return res;
@@ -230,7 +260,7 @@ operator* (Polynomial<T1,M> first, Polynomial<T2,N> second)
     {
         for (size_t j = 0; j < N; j++)
         {
-            res(i+j) += first(i) * second(j);
+            res.coeff(i+j) += first.coeff(i) * second.coeff(j);
         }
     }
     return res;
@@ -246,7 +276,7 @@ operator* (Polynomial<T1,M> first, Polynomial<T2,N> second)
     {
         for (size_t j = 0; j < N; j++)
         {
-            res(i+j) += first(i) * second(j);
+            res.coeff(i+j) += first.coeff(i) * second.coeff(j);
         }
     }
     return res;
