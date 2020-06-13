@@ -34,7 +34,7 @@ namespace PU
 
             std::array<Polynomial<double,2>,ARR_L-1> polynomials_subset;
                 
-            std::move(std::make_move_iterator(polynomials.begin() + 1), std::make_move_iterator(polynomials.end()), polynomials_subset.begin());
+            std::copy(polynomials.begin() + 1, polynomials.end(), polynomials_subset.begin());
             return SetProductEqualDegree<double, S - (N-1), N> (polynomials_subset) *  educt;
         };
     }

@@ -32,21 +32,9 @@ public:
         _coefficients = other._coefficients;
     }
 
-    // move constructor
-    Polynomial(Polynomial&& temp)
-    {
-        _coefficients = std::move(temp._coefficients);
-    };
-
     Polynomial operator= (const Polynomial& other)
     {
         _coefficients = other._coefficients;
-        return *this;
-    }
-
-    Polynomial operator= (Polynomial&& temp)
-    {
-        _coefficients = std::move(temp._coefficients);
         return *this;
     }
 
@@ -89,13 +77,14 @@ public:
         std::array<T,N-1> coefficients;
         if(std::abs(_coefficients[N-1]) <= 1e-13)
         {
-            std::move(  std::make_move_iterator(_coefficients.begin()), 
-                        std::make_move_iterator(_coefficients.end() - 1),
+            std::copy(  _coefficients.begin(), 
+                        _coefficients.end() - 1,
                         coefficients.begin());
         }
         else
         {
             std::cout << _coefficients[N-1] << std::endl;
+            throw;
         }
         
         return Polynomial<T,N-1> (coefficients);
@@ -147,14 +136,14 @@ std::ostream& operator<< (std::ostream& os, const Polynomial<T,N>& poly)
 
 template<typename T, size_t N>
 typename std::enable_if<std::is_floating_point<T>::value, Polynomial<double, N-1>>::type
-differentiate (Polynomial<T,N> factors)
+differentiate (Polynomial<T,N> to_diff)
 {
     assert (N > 1);
     auto res = Polynomial<double, N-1>();
     for (size_t i = 1; i < N; ++i)
     {
         size_t power = i;
-        res.coeff(i-1) = factors(i) * power;
+        res.coeff(i-1) = to_diff.coeff(i) * power;
     }
     return res;
 }
