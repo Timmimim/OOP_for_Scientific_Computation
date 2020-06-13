@@ -11,7 +11,6 @@
 
 namespace PU 
 {
-
     namespace Recursive
     {
         template<typename T, int S, int N>
@@ -32,10 +31,10 @@ namespace PU
             Polynomial<T,N>& educt = polynomials[0];
             std::cout << educt << std::endl;
 
-            std::array<Polynomial<double,2>,ARR_L-1> polynomials_subset;
-                
+            std::array<Polynomial<double,N>,ARR_L-1> polynomials_subset;
             std::copy(polynomials.begin() + 1, polynomials.end(), polynomials_subset.begin());
-            return SetProductEqualDegree<double, S - (N-1), N> (polynomials_subset) *  educt;
+
+            return SetProductEqualDegree<double, S - N, N> (polynomials_subset) *  educt;
         };
     }
 
@@ -45,7 +44,7 @@ namespace PU
         * Calculate Lagrange Basis for a set of Sample Points sp
         */
         template<size_t K>
-        static Polynomial<double,K> LagrangeBasis (std::array<double, K> sp_x, std::array<double, K> sp_fx) {
+        static Polynomial<double,K-1> LagrangeBasis (std::array<double, K> sp_x, std::array<double, K> sp_fx) {
             // for all x_values in sp_x at respective index i
             //      build l_i by first creating a Polynom<2> 
             //      as x / x_i-x_j, -x_j / x_i - x_j for all x-es, 
@@ -54,25 +53,26 @@ namespace PU
             // Calculate P(x) as the sum of f_i * l_i 
             // using respective function values for x_i
             
-            std::array<Polynomial<double,K>,sp_x.size()> l;
+            std::array<Polynomial<double,K-1>,sp_x.size()> l;
             
-            std::array<Polynomial<double, 2>, K-1> stepwise_polynomials;
+            std::array<Polynomial<double, 1>, K-1> stepwise_polynomials;
             for (size_t i = 0; i < K; ++i)
             {
                 for (size_t j = 0, pos = 0; j < K; ++j)
                 {
                     if(j != i)
                     {
-                        Polynomial<double,2> step_polynomial ({ -sp_x[j] / (sp_x[i]-sp_x[j]) , 1/(sp_x[i]-sp_x[j])});
+                        std::array<double, 2> coefficients ({ -sp_x[j] / (sp_x[i]-sp_x[j]) , 1/(sp_x[i]-sp_x[j])});
+                        Polynomial<double,1> step_polynomial (coefficients);
                         std::cout << step_polynomial << std::endl;
                         stepwise_polynomials[pos] = step_polynomial;
                         ++pos;
                     }
                 };
-                Polynomial<double, K> lagrange_polynomial = PU::Recursive::SetProductEqualDegree<double,K,2>(stepwise_polynomials);
+                Polynomial<double, K-1> lagrange_polynomial = PU::Recursive::SetProductEqualDegree<double,K-1,1>(stepwise_polynomials);
                 l[i] = lagrange_polynomial;
             }
-            Polynomial<double,K> interpolation;
+            Polynomial<double,K-1> interpolation;
             for (size_t i = 0; i < sp_x.size(); ++i)
             {
                 l[i] *= sp_fx[i]; 
