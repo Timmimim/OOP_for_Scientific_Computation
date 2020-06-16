@@ -13,7 +13,7 @@ namespace PU
 {
     namespace Recursive
     {
-        template<typename T, int S, int N>
+        template<typename T, size_t S, size_t N>
         static Polynomial<T,S> SetProductEqualDegree (std::array<Polynomial<T, N>, 1>& polynomials)
         {
             static_assert(N > 0, "Degree of Polynomial educts must be higher than 0");
@@ -22,7 +22,7 @@ namespace PU
             return polynomials[0];
         };
 
-        template<typename T, int S, int N, size_t ARR_L >
+        template<typename T, size_t S, size_t N, size_t ARR_L >
         static Polynomial<T,S> SetProductEqualDegree (std::array<Polynomial<T, N>, ARR_L>& polynomials)
         {   
             static_assert(N > 0, "Degree of Polynomial educts must be higher than 0");
