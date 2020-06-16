@@ -13,20 +13,18 @@ namespace PU
 {
     namespace Recursive
     {
-        template<typename T, size_t S, size_t N>
-        static Polynomial<T,S> SetProductEqualDegree (std::array<Polynomial<T, N>, 1>& polynomials)
+        template<typename T, size_t N>
+        static Polynomial<T,N> SetProductEqualDegree (std::array<Polynomial<T, N>, 1>& polynomials)
         {
             static_assert(N > 0, "Degree of Polynomial educts must be higher than 0");
-            static_assert(S == N, "Anchor Polynomial must be returned, so degree must equal that of set of educts.");
 
             return polynomials[0];
         };
 
-        template<typename T, size_t S, size_t N, size_t ARR_L >
-        static Polynomial<T,S> SetProductEqualDegree (std::array<Polynomial<T, N>, ARR_L>& polynomials)
+        template<typename T, size_t N, size_t ARR_L >
+        static Polynomial<T,N*ARR_L> SetProductEqualDegree (std::array<Polynomial<T, N>, ARR_L>& polynomials)
         {   
             static_assert(N > 0, "Degree of Polynomial educts must be higher than 0");
-            static_assert(S >= N, "Resulting Polynomial must have equal or higher degree than educts.");
 
             Polynomial<T,N>& educt = polynomials[0];
             std::cout << educt << std::endl;
@@ -34,7 +32,7 @@ namespace PU
             std::array<Polynomial<double,N>,ARR_L-1> polynomials_subset;
             std::copy(polynomials.begin() + 1, polynomials.end(), polynomials_subset.begin());
 
-            return SetProductEqualDegree<double, S - N, N> (polynomials_subset) *  educt;
+            return SetProductEqualDegree<double, N> (polynomials_subset) *  educt;
         };
     }
 
@@ -69,7 +67,7 @@ namespace PU
                         ++pos;
                     }
                 };
-                Polynomial<double, K-1> lagrange_polynomial = PU::Recursive::SetProductEqualDegree<double,K-1,1>(stepwise_polynomials);
+                Polynomial<double, K-1> lagrange_polynomial = PU::Recursive::SetProductEqualDegree<double,1>(stepwise_polynomials);
                 l[i] = lagrange_polynomial;
             }
             Polynomial<double,K-1> interpolation;
