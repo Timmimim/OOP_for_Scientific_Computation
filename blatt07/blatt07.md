@@ -1,4 +1,4 @@
-# Übungsblatt 06 - 16. Juni 2020
+# Übungsblatt 07 - 16. Juni 2020
 Bearbeitung bis zum **25. Juni**
 
 ## Aufgabe 1 (Temporäre Variablen)
@@ -14,7 +14,7 @@ diese Implementierung ineffizient bezüglich des Umgangs mit temporären Vectore
 4. Fügen Sie Überladungen bereits vorhandener Funktionen in `vector.h` hinzu, die die Erstellung von temporären Variablen
    reduzieren.
 
-Hinweis: Ihre Abgabe braucht nur eine Implementierung enthalten, die 3. und 4. zusammenfasst, es müssen keine separaten
+Hinweis: Ihre Abgabe soll nur eine Implementierung enthalten, die 3. und 4. zusammenfasst, es müssen keine separaten
 Datein zur Lösung von 3. und 4. angelegt werden.
 
 Lösungen:
@@ -23,12 +23,16 @@ Lösungen:
 
 ## Aufgabe 2 (SFNINAE)
 Erweitern Sie ihre `Polynom` Klasse um eine Funktion für den `+=` Operator, die nur dann kompiliert wenn das Polynom
-auf der rechten Seite den gleichen Grad oder niedriger hat. Nutzen Sie dafür `enable_if` im Rückgabewert, um die Funktion
-aus dem Overload-Set zuentfernen, wenn der Grad des anderen Polynoms größer ist.
+auf der rechten Seite den gleichen Grad oder niedriger hat. Nutzen Sie dafür `std::enable_if` im Rückgabewert (siehe Vorlesungsskript Section 9.3), um die Funktion
+aus dem Overload-Set zu entfernen, wenn der Grad des anderen Polynoms größer ist.
 
 ## Aufgabe 3 (Template Spezialization)
 In `specialization.cc` ist eine templatisierte Funktion `determinante` definiert, die für eine Matrix, gegeben als ein
 `std::array<std::array<double, N>, N>` Object, die Determinante berechnet. Im allgemeinen Fall lässt sich diese über eine
 LU Zerlegung berechnen. Spezialisieren Sie diese Funktion für 1D, 2D, und 3D.
 
-Optional: Wie lässt sich die Funktion spezialisieren, wenn statt `double` ebenfalls ein Template-Parameter benutzt wird? 
+Optional: Wenn statt `double` ebenfalls ein Template-Parameter benutzt
+werden soll, funktioniert der obige Ansatz nicht, da Sie Funktionen
+nicht **partiell** spezialisieren können. Wie lässt sich das Problem
+umgehen, so dass Sie denn die Funktion spezialisieren für 1D, 2D, 3D
+ausspezialisieren können?
