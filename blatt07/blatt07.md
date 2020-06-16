@@ -18,8 +18,8 @@ Hinweis: Ihre Abgabe braucht nur eine Implementierung enthalten, die 3. und 4. z
 Datein zur Lösung von 3. und 4. angelegt werden.
 
 Lösungen:
-2. *TODO*
-3. *TODO*
+- 2: *TODO*
+- 3: *TODO*
 
 ## Aufgabe 2 (SFNINAE)
 Erweitern Sie ihre `Polynom` Klasse um eine Funktion für den `+=` Operator, die nur dann kompiliert wenn das Polynom
