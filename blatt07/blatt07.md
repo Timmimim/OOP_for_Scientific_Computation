@@ -6,6 +6,7 @@ In `cg.h` ist eine Implementierung des CG Verfahrens gegeben, die stark an die m
 Ebenfalls vorgegeben sind (leicht erweiterte) Implementierungen der `Matrix` und `Vector` Klasse. Allerdings ist
 diese Implementierung ineffizient bezüglich des Umgangs mit temporären Vectoren.
 1. Schreiben Sie ein Testprogramm, das die Korrektheit der Klassen `CGSolver`, `Matrix` und `Vector` überprüft. 
+   Dazu können Sie das selbe Testproblem nehmen wie in Blatt 3.
 2. Identifizieren Sie die Ursache dieser Ineffizienz. (Hinweis: achten Sie auf die Funktiondeklarationen.) Zusätzlich
    sollen Sie diese Ineffizienz quantifizieren, d.h. wie oft werden temporäre Variablen erstellt, kopiert oder
    verschoben innerhalb einer Iteration des CG Verfahrens.
