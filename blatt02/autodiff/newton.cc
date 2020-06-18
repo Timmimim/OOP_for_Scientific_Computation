@@ -6,12 +6,14 @@
 std::pair<double, int> newton(std::function<Ad::SimpleAd(Ad::SimpleAd)> f, double start)
 {
   const double tol = 1e-13;
-  const int max_iter = 20;
+  const int max_iter = 200;
   int iter = 0;
   double x(start);
   Ad::SimpleAd fx = f(Ad::SimpleAd(x));
   for(; iter < max_iter;++iter){
-    // TODO Implement me!
+    x = x - fx.value() / fx.derivative();
+    fx = f(Ad::SimpleAd(x));
+    if(std::abs(fx.value()) < tol) break;
   }
   if(iter >= max_iter)
     throw std::runtime_error("Newton does not converge");
@@ -35,8 +37,6 @@ int main(){
 
   // compute a root of f using newtons method
 
-  /*
-
   std::cout.precision(17);
   double start = 0.0;
   auto [root, iterations] = newton(f, start);
@@ -48,6 +48,6 @@ int main(){
     std::cout << "failure!" << std::endl;
   }
 
-  */
+  
   return 0;
 }
