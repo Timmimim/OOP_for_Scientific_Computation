@@ -20,7 +20,7 @@ class CGSolver{
         {
             const auto alpha = r.dot(r) / p.dot(A * p);
             x = x + alpha * p;
-            const auto r_new = r - alpha * A * p;
+            const auto r_new = r - alpha * (A * p);
             if (r_new.two_norm() < eps)
                 break;
             else{
