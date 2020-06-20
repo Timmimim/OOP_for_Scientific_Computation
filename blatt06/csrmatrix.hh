@@ -23,6 +23,14 @@ public:
     _rowStarts.push_back(0); // first row is empty
   }
 
+  CSRMatrix(const CSRMatrix& other)
+    : _rows(other._rows)
+    , _cols(other._cols)
+    , _coefficients(other._coefficients)
+    , _colIndices(other._colIndices)
+    , _rowStarts(other._rowStarts)  
+    {};
+
   // Coefficients must be added in row major order
   void addCoefficient(unsigned int row, unsigned int col, double x){
     assert(row > _rowStarts.size()-2 || (row==_rowStarts.size()-2 && (_colIndices.empty() || col > _colIndices.back()))); // coefficients must be added in row-wise order!
