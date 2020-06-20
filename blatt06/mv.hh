@@ -20,4 +20,5 @@ Vector operator*(const M& mat, const Vector& v){
   return res;
 }
 
+
 #endif
