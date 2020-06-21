@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "../blatt03/matrix.h"
-#include "csrmatrix.hh"
-#include "matrix_iterator.hh"
-#include "mv.hh"
+#include "src/csrmatrix.hh"
+#include "src/matrix_iterator.hh"
+#include "src/mv.hh"
 
 
 int main(){
