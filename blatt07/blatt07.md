@@ -18,9 +18,42 @@ diese Implementierung ineffizient bezüglich des Umgangs mit temporären Vectore
 Hinweis: Ihre Abgabe soll nur eine Implementierung enthalten, die 3. und 4. zusammenfasst, es müssen keine separaten
 Datein zur Lösung von 3. und 4. angelegt werden.
 
-Lösungen:
-- 2: *TODO*
-- 3: *TODO*
+Lösungen:	
+
+	(Bem.: Übermütig, wie ich bin, habe ich in 2 direkt weitere Ineffizienzen neben den Temp-Vektor-Behandlungen
+	 betrachtet; diese greife ich aber in 3. wieder auf.)
+	
+- 2: Keine Copy- und Move-Assignment-Konstruktoren (wobei kein `move` von `std::vector` oder `std::array` möglich), sowie vor allem keine Überladungen der verschiedenen `operatorX` für _rvalue references_, und in `Vector` nahezu kein Arbeiten auf Referenzen, stattdessen Call-by-Value. Daher werden bei jedem Methodenaufruf zunächst für die Parameter neue Objekte aus den bestehenden konstruiert, und ebenso neue Objekte zurückgegeben. 
+
+	Daher werden bereits bei der Initialisieren von `V r = y - A * x` zunächst für `A*x` (Operator-Präzedenz) ein neuer temporärer Vektor konstruiert. Der `Vector::operator-()` ist aber nicht für Referenzen oder rval-refs implementiert, und konstruiert aus `y` und dem o.g. temp-Vektor jeweils neue Vektoren für die Parameter. Als Resultat wird ein neuer temporärer Vektor konstuiert und zurückgegeben. Damit ruft der Ausdruck 4 Standard-Konstruktoren für 2 Rechnungen auf, was sehr redundant ist. Auch die `operator=` sind nicht für rval-refs überladen, i.e. noch ein Default-Konstruktor. 
+	
+	Dies geschieht zwar für r zunächst nur einmal, setzt sich in der `for-loop` aber mit wesentlich mehr Wirkung fort. Jeder Aufruf der `Vector::dot()` -Methode erzeugt je einen redundanten Konstruktor-Aufruf, da der Parameter _CBV_ statt _Ref_ ist, ebenso verhält es sich mit dem `operator*(double,Vector)`. Für jeden `operator+(Vector,Vector)` und `operator-(Vector,Vector)` werden zwei Konstruktoren für die Parameter, sowie ein Konstruktor für den neuen Result-Vector aufgerufen, es bräuchte aber nur letzteren bei Verwendung von `const Vector&` Referenzen. Zwei Konstruktor-Aufrufe sind somit redundant pro Operator. 
+	
+	Weiterhin wird die potentiell teure Matrix-Vector-Multiplication via `operator*` mehrfach ausgeführt, anstatt die Multiplikation einmalig und via `Matrix::mv()` Methode auszuführen. Erstere Methode erstellt einen neuen Vektor, und führt dann selbst `mv()` mit diesem als Zielvektor aus. Direkte Verwendung von `mv()` würde, wenn der Zielvektor außerhalb der Schleife erstellt wird, insgesamt 2 Std.-Konstruktoren pro Schleifendurchlauf sparen, da das Resultat dauerhaft zur Verfügung stünde.
+	
+	Die Neuzuweisung von `x = x + alpha*p` könnte mittels `operator+=` zwei Konstruktoren einsparen.
+	
+	Vektor `r` wird nach der Erstellung des temp.-Vektors `r_new` lediglich noch einmal verwendet, inform des Skalarprodukts mit sich selbst in Zeile 27. Anstatt `r_new` als temporären Vektor zu verwenden, könnte man `double old_r_dot = r.dot(r)` berechnen, und dann `r -= alpha * (A*p)` berechnen. Für Vector die Zuweisungen `auto r_new = ...` und `r = ...`, würde je ein Konstruktor gespart. Außerdem wird `r.dot(r)` zweimal verwendet, man könnte als mit einer einmaligen Durchführung und einer lokalen Variable eine Operation sparen.
+	
+	Zuletzt kommt hinzu, dass der Vector `V x` zunächst mit einer festen Größe initialisiert wird, und dann nochmal allen Werten der `double 0.` zugewiesen wird. Dies ist in unserer Anwendung redundant, da `Vector` intern mit `std::vector` funktioniert, und bei der Initialisierung eines Vektors mit Länge != 0 alle Werte standardmäßig auf `0.` (bei `std::vector<double>`) gesetzt werden.
+	
+	Damit komme ich nach kurzem Zählen auf 4 redundante Kontruktoren für die Verwendungen der `.dot()` Methode, 3\*2 für die +/- Operatoren, 2 für die beiden Verwendung von `double*Vector`, 2 für die Erstellungen/Zuweisungen von `r_new` und `r`, sowie zwei für `x = x + ...` anstelle von `x += ...`, und zwei Matrix-Vektor-Multiplikationen auf Umwegen mit jeweils neu konstruiertem temporären Vektor anstelle einer lokalen Variable und einmaliger Ausführung pro Schleife.
+	
+	Damit komme ich PRO SCHLEIFENDURCHLAUF auf 6+2+4 = 12 redundanten Konstruktoren, resultierend allein aus der `Vector`-Klasse, sowie zudem 2 redundanten Berechnungen von Skalarprodukten, und 2+2+2 = 6 redundante Konstuktoren aus den ineffizienten Zuweisungen und einer redundanten Matrix-Vektor-Mult. in der Implementierung von `cg.h`. 
+	
+	
+- 3: Wie bereits erwähnt, bin ich bereits in 2. über das Ziel hinaus geschossen. Nach Änderungen im Code für die `Vector` Klasse sind zwar einige Redundanzen und Ineffizienzen behoben, aber es bleiben nach wie vor die redundanten Aufrufe aus der Implementierung von `cg.h` bestehen, nämlich 2 redundante Berechnungen von Skalarprodukten, und 2+2 = 4 redundante Konstuktoren aus den ineffizienten Zuweisungen, sowie zwei Konstruktoren pro Iteration für die Matrix-Vektor-Multiplikation auf Umwegen.
+
+	Zudem ist mir im zweiten Lesen aufgefallen, dass `x = 0.` bewirkt, dass in der folgenden Zuweisung `V r = y - A*x` die Matrix-Vektor-Multiplikation einen 0-Vektor ergibt, i.e. `V r = y - 0 = y`, und folglich `V p = y`. Die Multiplikation kann man sich somit sparen.
+
+	Diese Ineffizienzen lassen sich beheben durch:
+
+	- Ersetzen von `x = x + ...` durch `x += ...`;
+	- Ersetzen von `r_new = r - ...` durch `r -= ...` und eliminieren von `r_new`;
+	- Folglich keine Neuzuweisung von `r` zum Ende der Schleife, bereits geschehen;
+	- Einführen einer lokalen Variable `double old_p_dot = r.dot(r)`;
+	- Einführen einer `Vector mv_res` außerhalb der Schleife, um `A.mv(p, mv_res)` nutzen zu können;
+	- Nutzen von `mv_res` anstelle von redundanter Multiplikation.
 
 ## Aufgabe 2 (SFNINAE)
 Erweitern Sie ihre `Polynom` Klasse um eine Funktion für den `+=` Operator, die nur dann kompiliert wenn das Polynom
