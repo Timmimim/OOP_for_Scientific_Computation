@@ -20,7 +20,7 @@ int main ()
     lu.solve(b, x);
     
     CGSolver<Matrix,Vector> cg (100, 1e-13);
-    y = cg.solve(m,b);
+    y = cg.solve_more_efficiently(m,b);
 
     bool eq = true;
     for (int i = 0; i < y.size(); ++i)

@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 class Vector{
   std::vector<double> _data;
@@ -13,6 +14,8 @@ public:
     : _data(length) {}
 
   Vector(const Vector& other) = default;
+  
+  //Vector(Vector&& other) = default;
 
   Vector(std::initializer_list<double> l)
     : _data(l)
@@ -23,7 +26,8 @@ public:
     return *this;
   }
 
-  double dot(const Vector y) const{
+  double dot(const Vector& y) const{
+    assert((*this).size() == y.size());
     double sum = 0.;
     for (size_t i = 0; i < _data.size(); ++i){
       sum += _data[i] * y(i);
@@ -47,14 +51,32 @@ public:
     return _data.size();
   }
 
-  Vector& operator+=(const Vector y){
+  Vector& operator+=(const Vector& y){
+    assert((*this).size() == y.size());
     for(size_t i=0; i<(*this).size(); ++i){
       (*this)(i) += y(i);
     }
     return *this;
   }
 
-  Vector& operator-=(const Vector y){
+  Vector& operator+=(Vector&& y){
+    assert((*this).size() == y.size());
+    for(size_t i=0; i<(*this).size(); ++i){
+      (*this)(i) += y(i);
+    }
+    return *this;
+  }
+
+  Vector& operator-=(const Vector& y){
+    assert((*this).size() == y.size());
+    for(size_t i=0; i<(*this).size(); ++i){
+      (*this)(i) -= y(i);
+    }
+    return *this;
+  }
+
+  Vector& operator-=(Vector&& y){
+    assert((*this).size() == y.size());
     for(size_t i=0; i<(*this).size(); ++i){
       (*this)(i) -= y(i);
     }
@@ -62,7 +84,8 @@ public:
   }
 };
 
-Vector operator+(const Vector x, const Vector y){
+Vector operator+(const Vector& x, const Vector& y){
+  assert(x.size() == y.size());
   Vector tmp(x.size());
   for(size_t i=0; i<x.size(); ++i){
     tmp(i) = x(i)+y(i);
@@ -70,7 +93,24 @@ Vector operator+(const Vector x, const Vector y){
   return tmp;
 }
 
-Vector operator-(const Vector x, const Vector y){
+Vector operator+(Vector&& x, const Vector& y){
+  assert(x.size() == y.size());
+  for(size_t i=0; i<x.size(); ++i){
+    x(i) = x(i)+y(i);
+  }
+  return x;
+}
+
+Vector operator+(const Vector& x, Vector&& y){
+  assert(x.size() == y.size());
+  for(size_t i=0; i<y.size(); ++i){
+    y(i) = x(i)+y(i);
+  }
+  return y;
+}
+
+Vector operator-(const Vector& x, const Vector& y){
+  assert(x.size() == y.size());
   Vector tmp(x.size());
   for(size_t i=0; i<x.size(); ++i){
     tmp(i) = x(i)-y(i);
@@ -78,7 +118,23 @@ Vector operator-(const Vector x, const Vector y){
   return tmp;
 }
 
-Vector operator*(const double& x, const Vector y){
+Vector operator-(Vector&& x, const Vector& y){
+  assert(x.size() == y.size());
+  for(size_t i=0; i<x.size(); ++i){
+    x(i) = x(i)-y(i);
+  }
+  return x;
+}
+
+Vector operator-(const Vector& x, Vector&& y){
+  assert(x.size() == y.size());
+  for(size_t i=0; i<y.size(); ++i){
+    y(i) = x(i)-y(i);
+  }
+  return y;
+}
+
+Vector operator*(const double& x, const Vector& y){
   Vector tmp(y.size());
   for(size_t i=0; i<y.size(); ++i){
     tmp(i) = x*y(i);
@@ -86,7 +142,14 @@ Vector operator*(const double& x, const Vector y){
   return tmp;
 }
 
-std::ostream& operator <<(std::ostream& str, const Vector v){
+Vector operator*(const double& x, Vector&& y){
+  for(size_t i=0; i<y.size(); ++i){
+    y(i) *= x;
+  }
+  return y;
+}
+
+std::ostream& operator <<(std::ostream& str, const Vector& v){
   if(v.size() == 0){
     str << "Vector of size 0";
     return str;
