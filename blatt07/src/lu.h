@@ -1,10 +1,12 @@
 #ifndef LU_H
 #define LU_H
 
+#include <cassert>
+#include <iostream>
+#include <array>
+
 #include "vector.h"
 #include "matrix.h"
-#include <assert.h>
-#include <iostream>
 
 class LU{
   // decomposition is done in-place, so this matrix contains both L and R;
@@ -12,6 +14,7 @@ class LU{
   // upper-right half INCLUDING diagonal is R.
   // decouple the two matrices and multiply them to receice A.
   Matrix _decomposition; // store the decomposition in this matrix
+  //Vector _P; // pivoting -> stores column indices where permutation matrix has "1"s (i.e. swapped rows)
 
   // can easily be decoupled to work not-in-place, by writing partial result into auxiliary matrices
   // Matrix _L;
@@ -52,6 +55,41 @@ public:
     }
   }
 
+  // templated decomposition of Matrix provided as std::array of std::arrays m, without modifing it
+  template <typename T, size_t N>
+  void decompose(const std::array<std::array<T,N>,N> & in_mat){
+    Matrix m (N,N);
+    for (size_t i = 0; i<N; ++i)
+    {
+      for (size_t j = 0; j<N; ++j)
+      {
+        m(i,j) = in_mat[i][j];
+      }
+    }
+
+    size_t dim = N;
+    // allocate memory for decomposition
+    _decomposition = m;
+
+    for (size_t i = 0; i < dim-1; ++i)
+    {
+      // iterate over "remaining" matrix rows beyond current index
+      for (size_t k = i+1; k < dim; ++k)
+      {
+        // calculate L, first assure m(i,i) != 0.
+        assert(_decomposition(i,i) != 0.);
+        _decomposition(k,i) = _decomposition(k,i) / _decomposition(i,i);
+
+        // iterate over "remaining" matrix cols beyond current index
+        for (size_t j = i+1; j < dim; ++j)
+        {
+          // calculate R
+          _decomposition(k,j) = _decomposition(k,j) - _decomposition(k,i)*_decomposition(i,j);
+        }
+      }
+    }
+  }
+
   // decompose the Matrix m, reuse its resources
   void decompose(Matrix&& m){
     assert(m.cols() == m.rows());
@@ -76,8 +114,8 @@ public:
   }
 
   /**
-   * Ax = b,  A = LR   with P being a permutation matrix
-   * <=>  LRb = b
+   * Ax = b,  PA = LR   with P being a permutation matrix, ommitted in this example
+   * <=>  LRx = b
    * 
    * def auxiliary variable y := Rx  => Ly = b,  Rx = y
    * 
