@@ -21,11 +21,13 @@ class GaussSeidel
 {
     M _A;
     Vector _b;
+    size_t _iterations;
 
 public: 
     GaussSeidel<M> (const M mat, const Vector vec)
     :   _A(mat)
     ,   _b(vec)
+    ,   _iterations(0)
     {}
 
     void solve(Vector& x)
@@ -36,6 +38,7 @@ public:
 
         while (error >= err_threshold)
         {
+            _iterations++;
             error = 0.;
             for (auto [row_idx, cols] : rows(_A))
             {
@@ -57,6 +60,11 @@ public:
             error = std::max(error, (x_temp - x).abs_val());
             x = x_temp;
         }
+    }
+
+    size_t steps_until_convergence()
+    {
+        return _iterations;
     }
 };
 
