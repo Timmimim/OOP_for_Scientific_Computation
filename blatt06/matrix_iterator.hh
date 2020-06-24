@@ -5,11 +5,11 @@
 #include "csrmatrix.h"
 
 class MatrixColIterator {
-  Matrix& _matrix;
+  const Matrix& _matrix;
   unsigned int _row;
   unsigned int _col;
 public:
-  MatrixColIterator(Matrix& m, unsigned int row, unsigned int col)
+  MatrixColIterator(const Matrix& m, unsigned int row, unsigned int col)
     : _matrix(m)
     , _row(row)
     , _col(col)
@@ -28,11 +28,11 @@ public:
     return *this;
   }
 
-  std::pair<unsigned int, double&> operator*(){
+  std::pair<unsigned int, double> operator*() const{
     return {_col, _matrix(_row, _col)};
   }
 
-  std::pair<unsigned int, double&> operator->(){
+  std::pair<unsigned int, double> operator->() const{
     return *(*this);
   }
 };
@@ -41,25 +41,25 @@ class MatrixColRange {
   Matrix& _matrix;
   unsigned int _row;
 public:
-  MatrixColRange(Matrix& m, unsigned int row)
+  MatrixColRange(const Matrix& m, unsigned int row)
     : _matrix(m)
     , _row(row)
   {}
 
-  MatrixColIterator begin(){
+  MatrixColIterator begin() const{
     return {_matrix, _row, 0};
   }
 
-  MatrixColIterator end(){
+  MatrixColIterator end() const{
     return {_matrix, _row, _matrix.cols()};
   }
 };
 
 class MatrixRowIterator {
-  Matrix& _matrix;
+  const Matrix& _matrix;
   unsigned int _row;
 public:
-  MatrixRowIterator(Matrix& m, unsigned int row)
+  MatrixRowIterator(const Matrix& m, unsigned int row)
     : _matrix(m)
     , _row(row)
   {}
@@ -87,22 +87,22 @@ public:
 };
 
 class MatrixRowRange{
-  Matrix& _matrix;
+  const Matrix& _matrix;
 public:
-  MatrixRowRange(Matrix& m)
+  MatrixRowRange(const Matrix& m)
     : _matrix(m)
   {}
 
-  MatrixRowIterator begin(){
+  MatrixRowIterator begin() const{
     return {_matrix, 0};
   }
 
-  MatrixRowIterator end(){
+  MatrixRowIterator end() const{
     return {_matrix, _matrix.rows()};
   }
 };
 
-MatrixRowRange rows(Matrix& m){
+MatrixRowRange rows(const Matrix& m){
   return m;
 }
 
