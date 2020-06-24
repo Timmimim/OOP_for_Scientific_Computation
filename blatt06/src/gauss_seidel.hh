@@ -19,26 +19,25 @@
 template<class M>
 class GaussSeidel
 {
-    M _A;
-    Vector _b;
+    const size_t _MAX_ITER;
+    const double _TOL;
     size_t _iterations;
 
 public: 
-    GaussSeidel<M> (const M mat, const Vector vec)
-    :   _A(mat)
-    ,   _b(vec)
+    GaussSeidel<M> (const size_t max_iter, const double tolerance_threshold)
+    :   _MAX_ITER(max_iter)
+    ,   _TOL(tolerance_threshold)
     ,   _iterations(0)
     {}
 
-    void solve(Vector& x)
+    void solve(const M& mat, const Vector& _b, Vector& x)
     {
-        double err_threshold = 1e-13;
+        M _A = mat;
         double error = 1.;
         Vector x_temp (x);
 
-        while (error >= err_threshold)
+        for (_iterations = 1; _iterations <= _MAX_ITER; ++_iterations)
         {
-            _iterations++;
             error = 0.;
             for (auto [row_idx, cols] : rows(_A))
             {
@@ -59,6 +58,8 @@ public:
             }
             error = std::max(error, (x_temp - x).abs_val());
             x = x_temp;
+
+            if (error < _TOL) break;
         }
     }
 

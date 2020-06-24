@@ -46,14 +46,22 @@ int main()
     for (int i = 0; i < SIZE; ++i)
         x_b(i) = 1.;
 
+    const size_t MAX_ITER = 100000;
+    const double _ERR_THRESH = 1e-13;
+
+    std::cout   << "This examples runs a Gauss-Seidel Solver on a regular and a CSR matrix, respectively. "
+                << "The solver will terminate after " << MAX_ITER << " iteration steps, " 
+                << "or if the margin of error sinks below a threshold of " << _ERR_THRESH << "." << std::endl;
+
+    GaussSeidel<Matrix> GS_regular (MAX_ITER, _ERR_THRESH);
+    GaussSeidel<CSRMatrix> GS_csr (MAX_ITER, _ERR_THRESH);
+
     const clock_t begin_time_regular_matrix = clock();
-    GaussSeidel<Matrix> GS_regular (regular_matrix,b);
-    GS_regular.solve(x_a);
+    GS_regular.solve(regular_matrix, b, x_a);
     double runtime_gs_regular = double(clock() - begin_time_regular_matrix) / CLOCKS_PER_SEC;
 
     const clock_t begin_time_csr_matrix = clock();
-    GaussSeidel<CSRMatrix> GS_csr (csr_matrix,b);
-    GS_csr.solve(x_b);
+    GS_csr.solve(csr_matrix, b, x_b);
     double runtime_gs_csr = double(clock() - begin_time_csr_matrix) / CLOCKS_PER_SEC;
 
     std::cout << "Runtime GS using regular Matrix: " << runtime_gs_regular << std::endl;
@@ -69,6 +77,7 @@ int main()
         std::cout << "Results are equal, ";
         int steps_regular = GS_regular.steps_until_convergence();
         int steps_csr = GS_csr.steps_until_convergence();
+
         if (steps_regular == steps_csr)
         {
             std::cout << "and were achieved in an equal number of iterations (" << steps_csr << ")." << std::endl;
