@@ -155,6 +155,14 @@ public:
     }
     return norm;
   }
+
+  const double abs_val() const
+  {
+    double res = 0.;
+    for (size_t i = 0; i < this->size(); ++i)
+      res += std::abs(_data[i]);
+    return res;
+  }
   
   std::vector<double> data() const {
     return _data;

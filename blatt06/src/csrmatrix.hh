@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cassert>
-#include "../blatt03/vector.h"
+#include "../../blatt03/vector.h"
 
 class CSRMatrix{
   std::vector<double> _coefficients;
@@ -22,6 +22,14 @@ public:
     _rowStarts.push_back(0); // first row starts at 0
     _rowStarts.push_back(0); // first row is empty
   }
+
+  CSRMatrix(const CSRMatrix& other)
+    : _rows(other._rows)
+    , _cols(other._cols)
+    , _coefficients(other._coefficients)
+    , _colIndices(other._colIndices)
+    , _rowStarts(other._rowStarts)  
+    {};
 
   // Coefficients must be added in row major order
   void addCoefficient(unsigned int row, unsigned int col, double x){
@@ -61,5 +69,6 @@ public:
     return _cols;
   }
 };
+
 
 #endif
