@@ -3,7 +3,7 @@
 #include <array>
 
 #include "src/matrix.h"
-#include "src/lu.h"
+#include "src/lup.h"
 #include "src/type_writer.h"
 
 template<typename T>
@@ -30,9 +30,9 @@ typename std::enable_if<std::is_arithmetic<T>::value, T>::type
 determinante(const std::array<std::array<T, N>, N>& mat){
   static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
   // implementation based on LU decomposition
-  LU lu(N);
-  lu.decompose(mat);
-  Matrix R = lu.getDecomposition();
+  LUP lup(N);
+  lup.LUPDecompose(mat);
+  Matrix R = lup.getDecomposition();
   std::cout << R << std::endl;
   T det = T(1.);
   for (size_t i = 0; i<N; ++i)
@@ -43,11 +43,13 @@ determinante(const std::array<std::array<T, N>, N>& mat){
 template<size_t N>
 typename std::enable_if<(N>3), double>::type
 determinante(const std::array<std::array<double, N>, N>& mat){
+  
   static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
   // implementation based on LU decomposition
-  LU lu(N);
-  lu.decompose(mat);
-  Matrix R = lu.getDecomposition();
+  LUP lup(N);
+  lup.LUPDecompose(mat);
+  std::cout << "DOOODELALALALALALALALALALALA" << std::endl;
+  Matrix R = lup.getDecomposition();
   std::cout << R << std::endl;
   double det = 1.;
   for (size_t i = 0; i<N; ++i)
@@ -57,6 +59,7 @@ determinante(const std::array<std::array<double, N>, N>& mat){
 
 int main(){
   std::setprecision(20);
+
 
   // Test cases to ensure correctness
   std::array<std::array<double, 1>, 1> A_dim_1_double = {{1.}};
@@ -68,13 +71,14 @@ int main(){
   std::array<std::array<double, 3>, 3> E_dim_3_double = {std::array<double,3>({1., 2., 3.}), std::array<double,3>({4., 5., 6.}), std::array<double,3>({7., 8., 9.})};
   std::array<std::array<long, 3>, 3> F_dim_3_long = {std::array<long,3>({1, 4, 7}), std::array<long,3>({2, 5, 8}), std::array<long,3>({3, 6, 9})};
   
+
   std::array<std::array<double, 5>, 5> G_dim_N_double;
   for (size_t i = 0; i < 5; ++i)
   {
     std::array<double,5> new_row;
     for (size_t j = 0; j < 5; ++j)
     {
-      new_row[j] = i/5. + j/3. + 1.;
+      new_row[5-j] = (i*3 + j + 17.) * std::pow(-1,j);
     }
     G_dim_N_double[i] = new_row;
   }
@@ -85,7 +89,7 @@ int main(){
     std::array<long,7> new_row;
     for (size_t j = 0; j < 7; ++j)
     {
-      new_row[7-j] = 7*i+j+1;
+      new_row[7-j] = (7*i+j+1) * std::pow(-1,i);
     }
     H_dim_N_long[7-i] = new_row;
   }
