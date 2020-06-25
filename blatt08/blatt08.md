@@ -8,8 +8,8 @@ neuen Konstruktor der ihre `expression templates` akzeptiert. Ihre Implementieru
 Ausdrücke berechnen zu können (ohne den Einsatz von Temporaries):
 ```c++
 Vector a, b, c;
-auto t1 = a + b + c;
-auto t2 = a - a;
+Vector t1 = a + b + c;
+Vector t2 = a - a;
 ```
 Eine genauere Einführung zum Thema `expression templates` entnehmen Sie Vorlesungsskript. Da der hier verwendete
 `Vector` Typ dynamische größe besitzt, müssen Ihre `expression templates` eine Funktion bereitstellen, die die Größe 
@@ -23,8 +23,8 @@ Lage sein folgende Ausdrücke berechnen zu können:
 ```c++
 Vector d, e, f;
 double alpha;
-auto t3 = alpha * (d + e) + f;
-auto t4 = (d + e) / 2.;
+Vector t3 = alpha * (d + e) + f;
+Vector t4 = (d + e) / 2.;
 ```
  Beschränken Sie sich auf den Fall, dass die Skalare vom Typ `double` sind. Erstellen Sie zusätzliche Klassen, die
  Operationen der Art `op(scalar, vector)` und `op(vector, scalar)` darstellen. Achten Sie darauf, dass Sie die 
@@ -60,7 +60,7 @@ damit in der Lage sein folgenden Ausdruck berechnen zu können:
 ```c++
 Vector j, k, l;
 Matrix M;
-auto t5 = j + M * (k - l);
+Vector t5 = j + M * (k - l);
 ```
 Erstellen Sie dazu erneut eine neue Klasse, die die Operation `op(matrix, vector)` implementiert. Beachten Sie, das
 keine Operationen der Art `op(matrix, matrix)` gefordert sind.
