@@ -15,11 +15,6 @@ Eine genauere Einführung zum Thema `expression templates` entnehmen Sie Vorlesu
 `Vector` Typ dynamische größe besitzt, müssen Ihre `expression templates` eine Funktion bereitstellen, die die Größe 
 (oder auch Dimension) des Ausdrucks darstellt.
 
-*Optional*: Angenommen, Sie implementieren den neuen Konstruktor des `Vector` Typs als vollkommen generische Funktion 
-(z.B. `template<typename E> Vector(E e)`), dann ließe sich jeder Typ implicit in einen `Vector` konvertieren, obwohl 
-dies nur für `expression template` Typen vorgesehen ist. Benutzen Sie statischen Polymorphismus, um die Typ-Sicherheit
- des Konstruktors zu verbessern und somit ungewollte Konvertierung auszuschalten. 
-
 ## Aufgabe 2 (Skalare Multiplikation)
 Erweitern Sie Ihre `expression templates` um skalare Multiplikation und Division, also `scalar * vector` und 
 `vector [*/] scalar` zu unterstützen. Sie können annehmen, dass Ausdrücke immer korrekt geklammert sind, d.h. Sie
