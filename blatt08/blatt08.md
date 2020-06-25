@@ -67,9 +67,9 @@ keine Operationen der Art `op(matrix, matrix)` gefordert sind.
 
 ## *Optional*: Aufgabe 5 (Template-Programming)
 Implementieren Sie Ihre Operatoren, ohne eine neue Klasse für Skalare-Multiplikation zu erstellen. Dies 
-benötigt einen gewissen Aufwand an Template-Programmierung. Sie könnten dazu wie folgt vorgehen: erstellen Sie einen
-templatisierten Typ der eine `constexpr bool` Variable enthält (oder direkt eine templatisierte Variable, siehe
-[hier](https://en.cppreference.com/w/cpp/language/variable_template)) die ausdrückt, ob ein Typ sich wie ein Skalar, 
+benötigt einen gewissen Aufwand an Template-Programmierung. Sie könnten dazu wie folgt vorgehen: erstellen Sie
+templatisierte Typen die eine `constexpr static bool` Variable enthält (oder direkt templatisierte Variablen, siehe
+[hier](https://en.cppreference.com/w/cpp/language/variable_template)) die ausdrücken, ob ein Typ sich wie ein Skalar, 
 ein Vector oder eine Matrix verhält. Die default Instanziierung sollte in allen Fällen `false` sein und durch 
 Spezialisierung sollte für entsprechende Typen der Wert auf `true` gesetzt werden. Mit Hilfe von `enable_if` und
 SFINAE können Sie dann in Ihrer Klasse für binäre Operatoren verschiedene Varianten der selben Funktionen implementieren,
