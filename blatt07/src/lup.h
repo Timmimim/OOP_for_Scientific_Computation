@@ -248,7 +248,7 @@ public:
 
   /**
    * Implementation of pivoted LU Decomposition following online example written in C.
-   * Translated to C++ with custom Matrix and Vector formats.
+   * Translated to C++ with custom Matrix and Vector formats, and errors fixed.
    */
   void LUPDecompose(const Matrix& A) 
   {
@@ -275,7 +275,7 @@ public:
           idx_max_val = k;
         }
 
-      assert(col_max != 0.); //failure, matrix is degenerate, max absolute value is near 0
+      assert(col_max >= 1e-20); //failure, matrix is degenerate, max absolute value is near 0
 
       if (idx_max_val != i) 
       {
@@ -350,7 +350,7 @@ public:
         }
       }
 
-      assert(col_max != 0.); //failure, matrix is degenerate, max absolute value is near 0
+      assert(col_max >= 1e-20); //failure, matrix is degenerate, max absolute value is near 0
 
       if (idx_max_val != i) 
       {
