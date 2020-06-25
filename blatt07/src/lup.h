@@ -21,7 +21,7 @@ class LUP{
   // Matrix _R;
 
 public:
-  LUP(unsigned int size=0) : _decomposition(size,size), _P(size) {};
+  LUP(unsigned int size=0) : _decomposition(size,size), _P(size+1) {};
 
   Matrix getDecomposition()
   {
@@ -42,7 +42,7 @@ public:
       for (size_t k = i+1; k < dim; ++k)
       {
         // calculate L, first assure m(i,i) != 0.
-        assert(m(i,i) != 0.);
+        assert(_decomposition(i,i) != 0.);
         _decomposition(k,i) = _decomposition(k,i) / _decomposition(i,i);
 
         // iterate over "remaining" matrix cols beyond current index
@@ -263,7 +263,7 @@ public:
       _P(i) = i; //Unit permutation matrix (value is row of 1's), P(N) (counting pivots) initialized with N
       // Usage in Solver: Iterate over matrix, but instead of using row index r directly, use value of _P(r) to get swapped row back in place
 
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim-1; i++)
     {
       col_max = 0.0;
       idx_max_val = i;
@@ -275,7 +275,7 @@ public:
           idx_max_val = k;
         }
 
-      assert(col_max >= 1e-13); //failure, matrix is degenerate, max absolute value is near 0
+      assert(col_max != 0.); //failure, matrix is degenerate, max absolute value is near 0
 
       if (idx_max_val != i) 
       {
@@ -297,12 +297,19 @@ public:
         _P(dim)++;
       }
 
-      for (size_t j = i + 1; j < dim; j++) 
+      // iterate over "remaining" matrix rows beyond current index
+      for (size_t k = i+1; k < dim; ++k)
       {
-        _decomposition(j,i) /= _decomposition(i,i);
+        // calculate L, first assure m(i,i) != 0.
+        assert(_decomposition(i,i) != 0.);
+        _decomposition(k,i) = _decomposition(k,i) / _decomposition(i,i);
 
-        for (size_t k = i + 1; k < dim; k++)
-          _decomposition(j,k) -= _decomposition(j,i) * _decomposition(i,k);
+        // iterate over "remaining" matrix cols beyond current index
+        for (size_t j = i+1; j < dim; ++j)
+        {
+          // calculate R
+          _decomposition(k,j) = _decomposition(k,j) - _decomposition(k,i)*_decomposition(i,j);
+        }
       }
     };  //decomposition done 
   }
@@ -327,22 +334,23 @@ public:
     }
     _decomposition = m;
 
-    for (size_t i = 0; i <= dim; i++)
+    for (size_t i = 0; i <= dim; ++i)
       _P(i) = i; //Unit permutation matrix (index is column, value is row of 1's), P(N) (counting pivots) initialized with N
 
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim-1; ++i)
     {
       col_max = 0.0;
       idx_max_val = i;
-
-      for (size_t k = i; k < dim; k++)
+      for (size_t k = i; k < dim; ++k)
+      {
         if (std::abs(_decomposition(k,i)) > col_max) 
         { 
           col_max = std::abs(_decomposition(k,i));
           idx_max_val = k;
         }
-      std::cout << col_max << std::endl;
-      assert(col_max >= 1e-13); //failure, matrix is degenerate, max absolute value is near 0
+      }
+
+      assert(col_max != 0.); //failure, matrix is degenerate, max absolute value is near 0
 
       if (idx_max_val != i) 
       {
@@ -364,12 +372,19 @@ public:
         _P(dim)++;
       }
 
-      for (size_t j = i + 1; j < dim; j++) 
+      // iterate over "remaining" matrix rows beyond current index
+      for (size_t k = i+1; k < dim; ++k)
       {
-        _decomposition(j,i) /= _decomposition(i,i);
+        // calculate L, first assure m(i,i) != 0.
+        assert(_decomposition(i,i) != 0.);
+        _decomposition(k,i) = _decomposition(k,i) / _decomposition(i,i);
 
-        for (size_t k = i + 1; k < dim; k++)
-          _decomposition(j,k) -= _decomposition(j,i) * _decomposition(i,k);
+        // iterate over "remaining" matrix cols beyond current index
+        for (size_t j = i+1; j < dim; ++j)
+        {
+          // calculate R
+          _decomposition(k,j) = _decomposition(k,j) - _decomposition(k,i)*_decomposition(i,j);
+        }
       }
     };  //decomposition done 
   }
@@ -448,9 +463,15 @@ public:
     else
       return -det;
   }
+
+  int determinant_sign()
+  {
+    size_t dim = _decomposition.cols();
+    if ( (size_t(_P(dim)) - dim) % 2 == 0)
+      return 1;
+    else 
+      return -1;
+  }
 };
 
 #endif
-
-
-
