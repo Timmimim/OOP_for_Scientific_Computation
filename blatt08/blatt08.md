@@ -1,5 +1,5 @@
 # Übungsblatt 08 - 25. Juni 2020
-Bearbeitung bis zum **06.Juni**
+Bearbeitung bis zum **02.Juni**
 
 ## Aufgabe 1 (Binäre Operatoren)
 Implementieren Sie `expression templates` zur der binären Operationen `+,-` angewandt auf den Typen `Vector`. Zusätzlich
@@ -29,13 +29,6 @@ auto t4 = (d + e) / 2.;
  Beschränken Sie sich auf den Fall, dass die Skalare vom Typ `double` sind. Erstellen Sie zusätzliche Klassen, die
  Operationen der Art `op(scalar, vector)` und `op(vector, scalar)` darstellen. Achten Sie darauf, dass Sie die 
  Funktion zur Bestimmung der Größe anpassen.
- 
- *Optional*: Implementieren Sie diese Operatoren, ohne neue Klassen von `expression templates` zu erstellen. Dies 
- benötigt einen gewissen Aufwand an Template-Programmierung. Sie könnten dazu wie folgt vorgehen: zunächst benötigen Sie
- einen Typen, der den `[]` Operator für Skalare Typen implementiert. Dann müssen die Parameter Ihrer binären Operatoren
- in diesen Typen konvertiert werden, falls der Parameter einen Skalaren Typen darstellt. Dies ließe sich über 
- Template-Spezialisierungen erreichen. Abschließend muss sichergestellt werden, dass Ihre `expression templates` nicht
- den Skalaren Typen zur Gößenbestimmung benutzen. Hierbei ist das `enabble_if` Konstrukt hilfreich.
 
 ## Aufgabe 3 (Skalarprodukt)
 Erweitern Sie Ihre `expression templates` um das Skalarprodukt zu unterstützen, also die Operation `*(vector, vector)`.
@@ -71,3 +64,14 @@ auto t5 = j + M * (k - l);
 ```
 Erstellen Sie dazu erneut eine neue Klasse, die die Operation `op(matrix, vector)` implementiert. Beachten Sie, das
 keine Operationen der Art `op(matrix, matrix)` gefordert sind.
+
+## *Optional*: Aufgabe 5 (Template-Programming)
+Implementieren Sie Ihre Operatoren, ohne eine neue Klasse für Skalare-Multiplikation zu erstellen. Dies 
+benötigt einen gewissen Aufwand an Template-Programmierung. Sie könnten dazu wie folgt vorgehen: erstellen Sie einen
+templatisierten Typ der eine `constexpr bool` Variable enthält (oder direkt eine templatisierte Variable, siehe
+[hier](https://en.cppreference.com/w/cpp/language/variable_template)) die ausdrückt, ob ein Typ sich wie ein Skalar, 
+ein Vector oder eine Matrix verhält. Die default Instanziierung sollte in allen Fällen `false` sein und durch 
+Spezialisierung sollte für entsprechende Typen der Wert auf `true` gesetzt werden. Mit Hilfe von `enable_if` und
+SFINAE können Sie dann in Ihrer Klasse für binäre Operatoren verschiedene Varianten der selben Funktionen implementieren,
+wobei nur eine aktiv ist, abhängig von den Typen der beiden Operanden. Außerdem mussen Sie die Generator-Funktionen mit
+SFINAE so überladen, das immer nur eine Version aktiv ist und alle anderen aus dem Overload-Set entfernt werden.
