@@ -2,6 +2,7 @@
 
 #include "vector.h"
 #include <cassert>
+#include <iostream>
 
 class Matrix{
   std::vector<double> _data;
@@ -69,3 +70,26 @@ public:
     return y;
   }
 };
+
+std::ostream& operator <<(std::ostream& str, const Matrix& m){
+  if(m.rows() == 0 || m.cols() == 0){
+    str << "Matrix of size 0";
+    return str;
+  }
+  str << "[";
+  for(size_t i = 0; i < m.rows()-1; ++i)
+  {
+    str << "\t[" << m(i,0);
+    for(size_t j=1; j < m.cols(); ++j){
+      str << ", " << m(i,j);
+    }
+    str << "]\n";
+  }
+  str << "\t[" << m(m.rows()-1,0);
+  for(size_t j=1; j < m.cols(); ++j){
+    str << ", " << m(m.rows()-1,j);
+  }
+  str << "]";
+  str << " ]";
+  return str;
+}
