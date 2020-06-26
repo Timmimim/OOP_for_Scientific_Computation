@@ -13,9 +13,9 @@ public:
   Vector(unsigned int length)
     : _data(length) {}
 
-  Vector(const Vector& other) = default;
-  
-  //Vector(Vector&& other) = default;
+  Vector(const Vector&) = default;
+
+  Vector& operator=(const Vector&) = default;
 
   Vector(std::initializer_list<double> l)
     : _data(l)
