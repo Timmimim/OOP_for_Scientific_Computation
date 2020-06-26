@@ -50,7 +50,7 @@ determinant(const std::array<std::array<T, 3>, 3>& mat){
 }
 
 template<typename T, size_t N>
-double  //typename std::enable_if<(N>3UL), double>::type
+typename std::enable_if<std::is_arithmetic<T>::value, double>::type
 determinant(const std::array<std::array<T, N>, N>& mat){
   static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
   // implementation based on LU decomposition
