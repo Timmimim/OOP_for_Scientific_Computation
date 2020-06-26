@@ -32,26 +32,26 @@ std::ostream& operator <<(std::ostream& str, const std::array<std::array<T,N>,M>
 
 template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-determinante(const std::array<std::array<T, 1UL>, 1UL>& mat){
+determinant(const std::array<std::array<T, 1UL>, 1UL>& mat){
   return mat[0][0];
 }
 
 template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-determinante(const std::array<std::array<T, 2>, 2>& mat){
+determinant(const std::array<std::array<T, 2>, 2>& mat){
   return mat[0][0]*mat[1][1] - mat[1][0]*mat[0][1];
 }
 
 template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-determinante(const std::array<std::array<T, 3>, 3>& mat){
+determinant(const std::array<std::array<T, 3>, 3>& mat){
   return  mat[0][0]*mat[1][1]*mat[2][2] + mat[0][1]*mat[1][2]*mat[0][2] + mat[0][3]*mat[1][0]*mat[2][1]
         - mat[0][2]*mat[1][1]*mat[2][0] - mat[0][1]*mat[1][0]*mat[2][2] - mat[0][0]*mat[1][2]*mat[2][1];
 }
 
 template<typename T, size_t N>
 double  //typename std::enable_if<(N>3UL), double>::type
-determinante(const std::array<std::array<T, N>, N>& mat){
+determinant(const std::array<std::array<T, N>, N>& mat){
   static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
   // implementation based on LU decomposition
   LUP lup(N);
@@ -108,47 +108,47 @@ int main(){
     I_dim_N_int[i] = new_row;
   }
 
-  auto detA = determinante(A_dim_1_double);
+  auto detA = determinant(A_dim_1_double);
   static_assert(std::is_same<decltype(detA),double>::value);
   std::cout << "Matrix A:\n" << A_dim_1_double << std::endl;
   std::cout << "detA of 1x1 double matrix A is: " << detA << " of type " << type_writer::type_name<decltype(detA)>() << std::endl << std::endl;
 
-  auto detB = determinante(B_dim_1_int);
+  auto detB = determinant(B_dim_1_int);
   static_assert(std::is_same<decltype(detB),int>::value);
   std::cout << "Matrix B:\n" << B_dim_1_int << std::endl;
   std::cout << "detB of 1x1 int matrix is: " << detB << " of type " << type_writer::type_name<decltype(detB)>() << std::endl << std::endl;
 
-  auto detC = determinante(C_dim_2_float);
+  auto detC = determinant(C_dim_2_float);
   static_assert(std::is_same<decltype(detC),float>::value);
   std::cout << "Matrix C:\n" << C_dim_2_float << std::endl;
   std::cout << "detC of 2x2 float matrix is: " << detC << " of type " << type_writer::type_name<decltype(detC)>() << std::endl << std::endl;
 
-  auto detD = determinante(D_dim_2_short);
+  auto detD = determinant(D_dim_2_short);
   static_assert(std::is_same<decltype(detD),short>::value);
   std::cout << "Matrix D:\n" << D_dim_2_short << std::endl;
   std::cout << "detD of 2x2 short matrix is: " << detD << " of type " << type_writer::type_name<decltype(detD)>() << std::endl << std::endl;
 
-  auto detE = determinante(E_dim_3_double);
+  auto detE = determinant(E_dim_3_double);
   static_assert(std::is_same<decltype(detE),double>::value);
   std::cout << "Matrix E:\n" << E_dim_3_double << std::endl;
   std::cout << "detE of 3x3 double matrix is: " << detE << " of type " << type_writer::type_name<decltype(detE)>() << std::endl << std::endl;
 
-  auto detF = determinante(F_dim_3_long);
+  auto detF = determinant(F_dim_3_long);
   static_assert(std::is_same<decltype(detF),long>::value);
   std::cout << "Matrix F:\n" << F_dim_3_long << std::endl;
   std::cout << "detF of 3x3 long matrix is: " << detF << " of type " << type_writer::type_name<decltype(detF)>() << std::endl << std::endl;
 
-  auto detG = determinante(G_dim_N_double);
+  auto detG = determinant(G_dim_N_double);
   static_assert(std::is_same<decltype(detG),double>::value);
   std::cout << "Matrix G:\n" << G_dim_N_double << std::endl;
   std::cout << "detG of 5x5 double matrix is: " << (int) detG << " of type " << type_writer::type_name<decltype(detG)>() << std::endl << std::endl;
 
-  auto detH = determinante(H_dim_N_long);
+  auto detH = determinant(H_dim_N_long);
   static_assert(std::is_same<decltype(detH),double>::value);
   std::cout << "Matrix H:\n" << H_dim_N_long << std::endl;
   std::cout << "detH of 7x7 long matrix is: " << detH << " of type " << type_writer::type_name<decltype(detH)>() << std::endl << std::endl;
 
-  auto detI = determinante(I_dim_N_int);
+  auto detI = determinant(I_dim_N_int);
   static_assert(std::is_same<decltype(detI),double>::value);
   std::cout << "Matrix I:\n" << I_dim_N_int << std::endl;
   std::cout << "detI of 5x5 int matrix is: " << detI << " of type " << type_writer::type_name<decltype(detI)>() << std::endl << std::endl;  
