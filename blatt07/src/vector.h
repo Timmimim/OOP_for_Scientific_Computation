@@ -15,7 +15,11 @@ public:
 
   Vector(const Vector&) = default;
 
+  Vector(Vector&&) = default;
+
   Vector& operator=(const Vector&) = default;
+
+  Vector& operator=(Vector&&) = default;
 
   Vector(std::initializer_list<double> l)
     : _data(l)
