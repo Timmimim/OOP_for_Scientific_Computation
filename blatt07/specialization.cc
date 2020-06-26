@@ -50,23 +50,8 @@ determinante(const std::array<std::array<T, 3>, 3>& mat){
 }
 
 template<typename T, size_t N>
-typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+double  //typename std::enable_if<(N>3UL), double>::type
 determinante(const std::array<std::array<T, N>, N>& mat){
-  static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
-  // implementation based on LU decomposition
-  LUP lup(N);
-  lup.LUPDecompose(mat);
-  Matrix R = lup.getDecomposition();
-  T det = T(1.);
-  for (size_t i = 0; i<N; ++i)
-    det *= T(R(i,i));
-  return lup.determinant_sign() * det;
-}
-
-template<size_t N>
-typename std::enable_if<(N>3), double>::type
-determinante(const std::array<std::array<double, N>, N>& mat){
-  
   static_assert(N>0, "Error: Matrix cannot have negative dimensions.");
   // implementation based on LU decomposition
   LUP lup(N);
@@ -159,12 +144,12 @@ int main(){
   std::cout << "detG of 5x5 double matrix is: " << (int) detG << " of type " << type_writer::type_name<decltype(detG)>() << std::endl << std::endl;
 
   auto detH = determinante(H_dim_N_long);
-  static_assert(std::is_same<decltype(detH),long>::value);
+  static_assert(std::is_same<decltype(detH),double>::value);
   std::cout << "Matrix H:\n" << H_dim_N_long << std::endl;
   std::cout << "detH of 7x7 long matrix is: " << detH << " of type " << type_writer::type_name<decltype(detH)>() << std::endl << std::endl;
 
   auto detI = determinante(I_dim_N_int);
-  static_assert(std::is_same<decltype(detI),int>::value);
+  static_assert(std::is_same<decltype(detI),double>::value);
   std::cout << "Matrix I:\n" << I_dim_N_int << std::endl;
   std::cout << "detI of 5x5 int matrix is: " << detI << " of type " << type_writer::type_name<decltype(detI)>() << std::endl << std::endl;  
 }
