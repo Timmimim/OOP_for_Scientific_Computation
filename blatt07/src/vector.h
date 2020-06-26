@@ -90,7 +90,7 @@ Vector operator+(const Vector& x, const Vector& y){
   for(size_t i=0; i<x.size(); ++i){
     tmp(i) = x(i)+y(i);
   }
-  return tmp;
+  return std::move(tmp);
 }
 
 Vector operator+(Vector&& x, const Vector& y){
@@ -98,7 +98,7 @@ Vector operator+(Vector&& x, const Vector& y){
   for(size_t i=0; i<x.size(); ++i){
     x(i) = x(i)+y(i);
   }
-  return x;
+  return std::move(x);
 }
 
 Vector operator+(const Vector& x, Vector&& y){
@@ -106,7 +106,7 @@ Vector operator+(const Vector& x, Vector&& y){
   for(size_t i=0; i<y.size(); ++i){
     y(i) = x(i)+y(i);
   }
-  return y;
+  return std::move(y);
 }
 
 Vector operator-(const Vector& x, const Vector& y){
@@ -115,7 +115,7 @@ Vector operator-(const Vector& x, const Vector& y){
   for(size_t i=0; i<x.size(); ++i){
     tmp(i) = x(i)-y(i);
   }
-  return tmp;
+  return std::move(tmp);
 }
 
 Vector operator-(Vector&& x, const Vector& y){
@@ -123,7 +123,7 @@ Vector operator-(Vector&& x, const Vector& y){
   for(size_t i=0; i<x.size(); ++i){
     x(i) = x(i)-y(i);
   }
-  return x;
+  return std::move(x);
 }
 
 Vector operator-(const Vector& x, Vector&& y){
@@ -131,7 +131,7 @@ Vector operator-(const Vector& x, Vector&& y){
   for(size_t i=0; i<y.size(); ++i){
     y(i) = x(i)-y(i);
   }
-  return y;
+  return std::move(y);
 }
 
 Vector operator*(const double& x, const Vector& y){
@@ -139,14 +139,14 @@ Vector operator*(const double& x, const Vector& y){
   for(size_t i=0; i<y.size(); ++i){
     tmp(i) = x*y(i);
   }
-  return tmp;
+  return std::move(tmp);
 }
 
 Vector operator*(const double& x, Vector&& y){
   for(size_t i=0; i<y.size(); ++i){
     y(i) *= x;
   }
-  return y;
+  return std::move(y);
 }
 
 std::ostream& operator <<(std::ostream& str, const Vector& v){
