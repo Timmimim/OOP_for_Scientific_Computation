@@ -24,6 +24,7 @@ public:
   }
 
   // Coefficients must be added in row major order
+  // WARNING: each row must contain at least one entry, otherwise the matrix is invalid
   void addCoefficient(unsigned int row, unsigned int col, double x){
     assert(row > _rowStarts.size()-2 || (row==_rowStarts.size()-2 && (_colIndices.empty() || col > _colIndices.back()))); // coefficients must be added in row-wise order!
     for(unsigned r=_rowStarts.size()-1; r<=row; ++r){
