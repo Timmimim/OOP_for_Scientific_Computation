@@ -4,17 +4,28 @@ class A{
 public:
   A (){ std::cout << "default ctor" << std::endl;}
   A (const A&) { std::cout << "copy ctor" << std::endl;}
+  A (A&&) { std::cout << "move ctor" << std::endl;}
   ~A(){};
 
   A& operator=(const A&){ std::cout << "copy assignment" << std::endl;
     return *this;
   }
+
+  A& operator=(A&&) { std::cout << "move assignment" << std::endl;
+    return *this;
+  }
 };
 
 A operator+(const A&, const A&){
+  std::cout << "operator+ using const lval ref\n";
   A tmp;
   return tmp;
 }
+A operator+ (A&& tmp, const A&){
+  std::cout << "operator+ using rval ref\n";
+  return std::move(tmp);
+}
+
 
 int main(){
   A x;
