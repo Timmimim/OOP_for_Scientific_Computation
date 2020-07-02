@@ -1,5 +1,5 @@
 # Übungsblatt 08 - 25. Juni 2020
-Bearbeitung bis zum **02.Juni**
+Bearbeitung bis zum **02. Juli**
 
 ## Aufgabe 1 (Binäre Operatoren)
 Implementieren Sie `expression templates` zur der binären Operationen `+,-` angewandt auf den Typen `Vector`. Zusätzlich
