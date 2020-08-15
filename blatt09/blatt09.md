@@ -17,6 +17,19 @@ for i in 0..N
 Nehmen Sie an, dass alle die Einträge aller Arrays 8 Byte groß sind (entspricht `double` und `std::size_t`). Zeigen Sie, 
 dass die arithmetische Intensität `1/12` entspricht unter angemessenen Vereinfachungen.
 
+### Lösung für Aufgabe 1
+```
+I = f / m
+mit f = 2 für Multiplikation und AddAssignment,
+und m = 3 lesende Speicherzugriffe pro Schleife für Indices, Matrix- und Vektor-Werte, mal 8Byte
+
+--> I = 2 * N*nnz  /  3 * 8Byte * N*nnz
+      = 2 / 24
+      = 1 / 12
+```
+
+
+
 ## Aufgabe 2 (Roofline Model PCG)
 Betrachten Sie folgende Beschreibung des PCG Algorithmus:  
 ```
