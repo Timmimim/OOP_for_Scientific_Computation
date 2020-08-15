@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 
+#include "expression_templates.h"
 
 class Vector{
   std::vector<double> _data;
@@ -15,7 +16,63 @@ public:
 
   Vector(const Vector&) = default;
 
+  // Constructor from Unary Expression Template
+  template<typename F, typename A>
+  Vector(UnaryExpr<F,A> const& expr)
+  {
+    _data.reserve(expr.size());
+    for(int i = 0; i < expr.size(); ++i)
+      _data[i] += expr[i];
+  }
+
+  // Constructor from Binary Expression Template
+  template<typename F, typename A, typename B>
+  Vector(BinaryExpr<F,A,B> const& expr)
+  {
+    _data.reserve(expr.size());
+    for(int i = 0; i < expr.size(); ++i)
+      _data[i] = expr[i];
+  }
+
   Vector& operator=(const Vector&) = default;
+
+  // Assignment of Unary Expression Template
+  template<typename F, typename A>
+  Vector& operator= (UnaryExpr<F,A> const& expr)
+  {
+    _data(expr.size_());
+    for(int i = 0; i < expr.size_(); ++i)
+      _data[i] += expr[i];
+    return *this;
+  }
+
+  // Assignment of Binary Expression Template
+  template<typename F, typename A, typename B>
+  Vector& operator= (BinaryExpr<F,A,B> const& expr)
+  {
+    _data(expr.size_());
+    for(int i = 0; i < expr.size_(); ++i)
+      _data[i] += expr[i];
+    return *this;
+  }
+  
+  // Compound assignment of Unary Expression Template
+  template<typename F, typename A>
+  Vector& operator+= (UnaryExpr<F,A> const& expr)
+  {
+    for(int i = 0; i < expr.size_(); ++i)
+      _data[i] += expr[i];
+    return *this;
+  }
+
+  // Compound assignment of Binary Expression Template
+  template<typename F, typename A, typename B>
+  Vector& operator+= (BinaryExpr<F,A,B> const& expr)
+  {
+    for(int i = 0; i < expr.size_(); ++i)
+      _data[i] += expr[i];
+    return *this;
+  }
 
   Vector(std::initializer_list<double> l)
     : _data(l)
