@@ -26,6 +26,8 @@ int main(){
     Vector h{8, 9, 10};
     Vector i{9, 10, 11};
 
+
+/*
     double t5 = g * h;
     Vector t6 = (g * h) * i;
     std::cout << t5 << std::endl;
@@ -36,9 +38,10 @@ int main(){
     Vector l{12, 13, 14};
 
     Matrix M{{{2, -1, 0},
-                     {-1, 2, -1},
-                     {0, -1, 2}}};
+              {-1, 2, -1},
+              {0, -1, 2}}};
 
     Vector t7 = j + M * (k - l);
     std::cout << t7 << std::endl;
+    */
 }
